@@ -23,6 +23,99 @@ import { ThemeProvider, useTheme } from './src/context/ThemeContext';
 import { Tab, Language } from './src/types';
 import { useScreenDimensions, scale, rfValue, getHorizontalPadding } from './src/utils/responsive';
 
+// ---------- Animated Tab Item ----------
+function TabItem({
+  tab,
+  isActive,
+  onPress,
+}: {
+  tab: { key: Tab; label: string; icon: string; family?: string; activeColor: string };
+  isActive: boolean;
+  onPress: () => void;
+}) {
+  const { colors } = useTheme();
+  const springAnim = useRef(new Animated.Value(isActive ? 1 : 0)).current;
+
+  useEffect(() => {
+    Animated.spring(springAnim, {
+      toValue: isActive ? 1 : 0,
+      friction: 6,
+      tension: 100,
+      useNativeDriver: true,
+    }).start();
+  }, [isActive]);
+
+  const IconComponent =
+    tab.family === 'Ionicons'
+      ? Ionicons
+      : tab.family === 'Feather'
+      ? Feather
+      : MaterialCommunityIcons;
+
+  const iconScale = springAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 1.15],
+  });
+
+  const indicatorWidth = springAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, scale(18)],
+  });
+
+  const labelOpacity = springAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.6, 1],
+  });
+
+  return (
+    <TouchableOpacity
+      style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: scale(4) }}
+      onPress={onPress}
+      activeOpacity={0.7}
+      accessibilityRole="tab"
+      accessibilityState={{ selected: isActive }}
+      accessibilityLabel={tab.label}
+    >
+      <Animated.View
+        style={{
+          width: scale(40),
+          height: scale(40),
+          borderRadius: 12,
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: 2,
+          backgroundColor: isActive ? tab.activeColor + '20' : 'transparent',
+          transform: [{ scale: iconScale }],
+        }}
+      >
+        <IconComponent name={tab.icon as any} size={scale(22)} color={isActive ? tab.activeColor : colors.gray400} />
+      </Animated.View>
+      <Animated.Text
+        style={{
+          fontSize: rfValue(10),
+          fontWeight: isActive ? '700' : '600',
+          letterSpacing: 0.2,
+          color: isActive ? tab.activeColor : colors.gray400,
+          opacity: labelOpacity,
+        }}
+      >
+        {tab.label}
+      </Animated.Text>
+      {isActive && (
+        <Animated.View
+          style={{
+            width: indicatorWidth,
+            height: 3,
+            borderRadius: 1.5,
+            marginTop: 3,
+            backgroundColor: tab.activeColor,
+          }}
+        />
+      )}
+    </TouchableOpacity>
+  );
+}
+
 // ---------- Tab Bar Component ----------
 function TabBar({ active, onTabChange }: { active: Tab; onTabChange: (t: Tab) => void }) {
   const { t } = useTranslation();
@@ -51,47 +144,14 @@ function TabBar({ active, onTabChange }: { active: Tab; onTabChange: (t: Tab) =>
       noBorder
     >
       <View style={{ flexDirection: 'row' }}>
-        {tabs.map((tab) => {
-          const isActive = active === tab.key;
-          const IconComponent =
-            tab.family === 'Ionicons'
-              ? Ionicons
-              : tab.family === 'Feather'
-              ? Feather
-              : MaterialCommunityIcons;
-
-          return (
-            <TouchableOpacity
-              key={tab.key}
-              style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: scale(4) }}
-              onPress={() => onTabChange(tab.key)}
-              activeOpacity={0.7}
-            >
-              <View style={{
-                width: scale(38),
-                height: scale(38),
-                borderRadius: 10,
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginBottom: 2,
-                backgroundColor: isActive ? tab.activeColor + '20' : 'transparent',
-              }}>
-                <IconComponent name={tab.icon as any} size={scale(22)} color={isActive ? tab.activeColor : colors.gray400} />
-              </View>
-              <Text style={{
-                fontSize: rfValue(10),
-                fontWeight: isActive ? '700' : '600',
-                letterSpacing: 0.2,
-                color: isActive ? tab.activeColor : colors.gray400,
-              }}>
-                {tab.label}
-              </Text>
-              {isActive && (
-                <View style={{ width: scale(16), height: 3, borderRadius: 1.5, marginTop: 3, backgroundColor: tab.activeColor }} />
-              )}
-            </TouchableOpacity>
-          );
-        })}
+        {tabs.map((tab) => (
+          <TabItem
+            key={tab.key}
+            tab={tab}
+            isActive={active === tab.key}
+            onPress={() => onTabChange(tab.key)}
+          />
+        ))}
       </View>
     </GlassCard>
   );
@@ -236,4 +296,3 @@ export default function App() {
     </ThemeProvider>
   );
 }
-

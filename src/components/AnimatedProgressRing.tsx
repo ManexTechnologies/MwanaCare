@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Animated, Text, StyleSheet } from 'react-native';
+import { View, Animated, Text } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 
 interface AnimatedProgressRingProps {
@@ -12,7 +12,10 @@ interface AnimatedProgressRingProps {
   showPercentage?: boolean;
 }
 
-// Pure React Native fallback ring using nested Views
+/**
+ * Proper circular progress ring using rotation transforms.
+ * Uses the "two half-circles" technique for a clean arc.
+ */
 function ViewRing({
   progress,
   size = 100,
@@ -21,61 +24,105 @@ function ViewRing({
   trackColor,
   label,
   showPercentage,
-}: Omit<AnimatedProgressRingProps, 'color' | 'trackColor'> & {
+}: {
+  progress: number;
+  size: number;
+  strokeWidth: number;
   color: string;
   trackColor: string;
+  label?: string;
+  showPercentage: boolean;
 }) {
   const animatedValue = useRef(new Animated.Value(0)).current;
+  const halfSize = size / 2;
+  const radius = halfSize - strokeWidth / 2;
+  const circumference = 2 * Math.PI * radius;
+
+  // Interpolate progress to degrees (0-360)
+  const rotateInterpolation = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
 
   useEffect(() => {
     Animated.timing(animatedValue, {
-      toValue: progress,
+      toValue: Math.min(Math.max(progress, 0), 1),
       duration: 1000,
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start();
   }, [progress]);
 
-  const animatedWidth = animatedValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0%', '100%'],
-  });
-
+  // Render the proper circular arc technique
   return (
     <View style={{ alignItems: 'center', justifyContent: 'center', width: size, height: size }}>
-      {/* Track background */}
+      {/* Outer track circle */}
       <View
         style={{
           width: size,
           height: size,
-          borderRadius: size / 2,
+          borderRadius: halfSize,
           backgroundColor: trackColor,
           position: 'absolute',
           justifyContent: 'center',
           alignItems: 'center',
         }}
       >
-        {/* Fill arc using a clipped approach */}
+        {/* Progress arc: two half-circles with rotation */}
+        {/* Left half clip */}
         <View
           style={{
-            width: size,
-            height: size,
-            borderRadius: size / 2,
-            overflow: 'hidden',
             position: 'absolute',
+            width: halfSize,
+            height: size,
+            left: 0,
+            overflow: 'hidden',
           }}
         >
           <Animated.View
             style={{
-              width: animatedWidth,
+              position: 'absolute',
+              width: size,
               height: size,
-              backgroundColor: color,
-              opacity: 0.25,
+              borderRadius: halfSize,
+              borderWidth: strokeWidth,
+              borderColor: color,
+              left: 0,
+              transform: [
+                { rotate: rotateInterpolation },
+                { translateX: -halfSize },
+              ],
+            }}
+          />
+        </View>
+        {/* Right half clip */}
+        <View
+          style={{
+            position: 'absolute',
+            width: halfSize,
+            height: size,
+            right: 0,
+            overflow: 'hidden',
+          }}
+        >
+          <View
+            style={{
+              position: 'absolute',
+              width: size,
+              height: size,
+              borderRadius: halfSize,
+              borderWidth: strokeWidth,
+              borderColor: progress > 0.5 ? color : 'transparent',
+              right: 0,
+              transform: [
+                { rotate: progress > 0.5 ? '180deg' : '0deg' },
+                { translateX: halfSize },
+              ],
             }}
           />
         </View>
       </View>
 
-      {/* Inner cutout */}
+      {/* Inner cutout - shows the background through */}
       <View
         style={{
           width: size - strokeWidth * 2,
@@ -84,10 +131,19 @@ function ViewRing({
           backgroundColor: 'transparent',
           justifyContent: 'center',
           alignItems: 'center',
+          zIndex: 2,
         }}
       >
         {showPercentage && (
-          <Text style={{ fontSize: size * 0.2, fontWeight: '700', color }}>
+          <Text
+            style={{
+              fontSize: size * 0.2,
+              fontWeight: '700',
+              color,
+              textAlign: 'center',
+            }}
+            accessibilityLabel={`${Math.round(progress * 100)} percent`}
+          >
             {Math.round(progress * 100)}%
           </Text>
         )}

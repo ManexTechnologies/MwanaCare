@@ -1,11 +1,11 @@
-import React from 'react';
-import { ScrollView, Text, View, TouchableOpacity } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { ScrollView, Text, View, TouchableOpacity, Alert, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
 import { COLORS, SHADOWS } from '../theme';
 import { useTranslation } from '../i18n';
 import { useTheme } from '../context/ThemeContext';
-import { BoxIcon, AnimatedCard, StatCard, GlassCard, PressableScale, AnimatedProgressRing } from '../components';
+import { BoxIcon, AnimatedCard, StatCard, GlassCard, PressableScale, AnimatedProgressRing, DashboardSkeleton } from '../components';
 import { usePersistedState } from '../storage/usePersistedState';
 import { DashboardData } from '../types';
 import { useScreenDimensions, scale, rfValue, getHorizontalPadding, getGridGap } from '../utils/responsive';
@@ -18,12 +18,51 @@ export function Dashboard() {
     babyWeight: '3.2',
     babyHeight: '49.5',
   });
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const { currentWeek, babyWeight, babyHeight } = dashboardData;
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    // Simulate a data refresh
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setRefreshing(false);
+  }, []);
+
+  const handleQuickAction = useCallback((action: string) => {
+    switch (action) {
+      case 'reminder':
+        Alert.alert(t('dashboard.set_reminder'), t('dashboard.set_reminder'));
+        break;
+      case 'clinic':
+        Alert.alert(t('dashboard.contact_clinic'), t('dashboard.contact_clinic'));
+        break;
+      case 'symptoms':
+        Alert.alert(t('dashboard.symptoms'), t('dashboard.symptoms'));
+        break;
+      case 'nearby':
+        Alert.alert(t('dashboard.nearby_clinic'), t('dashboard.nearby_clinic'));
+        break;
+    }
+  }, [t]);
+
+  if (loading) {
+    return <DashboardSkeleton />;
+  }
 
   return (
     <ScrollView
       style={{ flex: 1, paddingHorizontal: getHorizontalPadding(), paddingTop: scale(16), backgroundColor: colors.primaryBg }}
       showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor={colors.primary}
+          colors={[colors.primary]}
+          progressBackgroundColor={isDark ? colors.gray50 : colors.white}
+        />
+      }
     >
       {/* Glassmorphism Hero Section */}
       <AnimatedCard delay={0}>
@@ -48,7 +87,8 @@ export function Dashboard() {
             <Text style={{ fontSize: rfValue(22), fontWeight: '800', color: colors.white, marginTop: scale(12), marginBottom: scale(4) }}>{t('dashboard.hero.title')}</Text>
             <Text style={{ fontSize: rfValue(14), color: isDark ? colors.gray400 : '#CCFBF1', lineHeight: scale(20), marginBottom: scale(16) }}>{t('dashboard.hero.subtitle')}</Text>
             <PressableScale>
-              <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 10, paddingVertical: scale(10), paddingHorizontal: scale(18), alignSelf: 'flex-start', gap: scale(8) }}>
+              <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 10, paddingVertical: scale(10), paddingHorizontal: scale(18), alignSelf: 'flex-start', gap: scale(8) }}
+                accessibilityRole="button" accessibilityLabel={t('dashboard.hero.button')}>
                 <Text style={{ fontSize: rfValue(14), fontWeight: '600', color: colors.white }}>{t('dashboard.hero.button')}</Text>
                 <Feather name="arrow-right" size={scale(16)} color={colors.white} />
               </TouchableOpacity>
@@ -124,7 +164,6 @@ export function Dashboard() {
                 showPercentage
               />
             </View>
-          </View>
         </GlassCard>
       </AnimatedCard>
 
@@ -139,7 +178,6 @@ export function Dashboard() {
                 <Text style={{ fontSize: rfValue(16), fontWeight: '600', color: colors.gray800, marginBottom: scale(4) }}>{t('dashboard.tip_title_stay')}</Text>
                 <Text style={{ fontSize: rfValue(13), color: colors.gray600, lineHeight: scale(18) }}>{t('dashboard.tip_body_stay')}</Text>
               </View>
-            </View>
           </LinearGradient>
         </GlassCard>
       </AnimatedCard>
@@ -150,13 +188,13 @@ export function Dashboard() {
       </AnimatedCard>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: getGridGap(), marginBottom: scale(12) }}>
         {[
-          { icon: 'bell-ring-outline', label: t('dashboard.set_reminder'), color: colors.secondary },
-          { icon: 'phone-in-talk-outline', label: t('dashboard.contact_clinic'), color: colors.primary },
-          { icon: 'stethoscope', label: t('dashboard.symptoms'), color: colors.rose },
-          { icon: 'map-marker-outline', label: t('dashboard.nearby_clinic'), color: colors.accent },
+          { icon: 'bell-ring-outline', label: t('dashboard.set_reminder'), color: colors.secondary, action: 'reminder' },
+          { icon: 'phone-in-talk-outline', label: t('dashboard.contact_clinic'), color: colors.primary, action: 'clinic' },
+          { icon: 'stethoscope', label: t('dashboard.symptoms'), color: colors.rose, action: 'symptoms' },
+          { icon: 'map-marker-outline', label: t('dashboard.nearby_clinic'), color: colors.accent, action: 'nearby' },
         ].map((action, idx) => (
           <AnimatedCard key={idx} delay={420 + idx * 30} style={{ width: '47%', flexGrow: 1 }}>
-            <PressableScale>
+            <PressableScale onPress={() => handleQuickAction(action.action)}>
               <GlassCard intensity={isDark ? 'heavy' : 'light'} style={{ padding: scale(14), alignItems: 'center' }} noBorder>
                 <BoxIcon icon={action.icon} size={scale(22)} color={action.color} bgColor={action.color + '15'} containerSize={scale(46)} />
                 <Text style={{ fontSize: rfValue(11), fontWeight: '600', color: colors.gray600, textAlign: 'center', marginTop: scale(8) }}>{action.label}</Text>
@@ -169,4 +207,3 @@ export function Dashboard() {
     </ScrollView>
   );
 }
-

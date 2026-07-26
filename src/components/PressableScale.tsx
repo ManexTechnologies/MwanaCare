@@ -10,7 +10,6 @@ export function PressableScale({
   children,
   scaleTo = 0.95,
   duration = 120,
-  style,
   ...props
 }: PressableScaleProps) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -38,10 +37,9 @@ export function PressableScale({
       onPressOut={handlePressOut}
       {...props}
     >
-      <Animated.View style={[{ transform: [{ scale: scaleAnim }] }, style]}>
+      <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
         {children}
       </Animated.View>
     </TouchableOpacity>
   );
 }
-
