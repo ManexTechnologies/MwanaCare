@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+.import React, { useState, useEffect, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
   SafeAreaView,
@@ -319,32 +319,481 @@ function SettingsModal({ visible, title, onClose, children }: SettingsModalProps
   );
 }
 
-// ---------- Language Data ----------
+// ---------- Language / i18n System ----------
 const LANGUAGES: { key: Language; label: string; native: string; flag: string }[] = [
   { key: 'english', label: 'English', native: 'English', flag: '🇬🇧' },
   { key: 'shona', label: 'Shona', native: 'chiShona', flag: '🇿🇼' },
   { key: 'ndebele', label: 'Ndebele', native: 'isiNdebele', flag: '🇿🇼' },
 ];
 
+// Translations
+type TranslationMap = Record<string, string>;
+
+const TRANSLATIONS: Record<Language, TranslationMap> = {
+  english: {
+    // App
+    'app.name': 'MwanaCare',
+    'app.tagline': 'Maternal & Child Health',
+
+    // Header
+    'header.subtitle': 'Maternal & Child Health',
+
+    // Dashboard
+    'dashboard.hero.title': 'Welcome to MwanaCare',
+    'dashboard.hero.subtitle': 'Your companion for maternal and child health',
+    'dashboard.hero.button': 'View Dashboard',
+    'dashboard.overview': 'Health Overview',
+    'dashboard.baby_weight': "Baby's Weight",
+    'dashboard.baby_height': "Baby's Height",
+    'dashboard.week': 'Pregnancy Week',
+    'dashboard.weeks': 'weeks',
+    'dashboard.next_vaccine': 'Next Vaccine',
+    'dashboard.next_vaccine_value': 'In 2w',
+    'dashboard.tip_title': 'Health Tip of the Day',
+    'dashboard.tip_title_stay': 'Stay Hydrated',
+    'dashboard.tip_body_stay': 'Drink at least 8-10 glasses of water daily during pregnancy. Proper hydration supports healthy amniotic fluid levels.',
+    'dashboard.quick_actions': 'Quick Actions',
+    'dashboard.set_reminder': 'Set Reminder',
+    'dashboard.contact_clinic': 'Contact Clinic',
+    'dashboard.symptoms': 'Symptoms',
+    'dashboard.nearby_clinic': 'Nearby Clinic',
+
+    // Vaccine
+    'vaccine.title': 'Immunization Schedule',
+    'vaccine.subtitle': 'Tap to mark as completed',
+    'vaccine.at_birth': 'At Birth',
+    'vaccine.6_weeks': '6 Weeks',
+    'vaccine.10_weeks': '10 Weeks',
+    'vaccine.14_weeks': '14 Weeks',
+    'vaccine.9_months': '9 Months',
+    'vaccine.18_months': '18 Months',
+
+    // Growth
+    'growth.title': 'Growth Tracker',
+    'growth.subtitle': "Monitor your child's development",
+    'growth.placeholder_title': 'Track Growth Over Time',
+    'growth.placeholder_text': "Record your baby's weight, height, and head circumference at each check-up. Visual charts will appear once you add measurements.",
+    'growth.add_measurement': 'Add Measurement',
+    'growth.milestones': 'Milestone Checklist',
+    'growth.1_month': '1 Month',
+    'growth.3_months': '3 Months',
+    'growth.6_months': '6 Months',
+    'growth.9_months': '9 Months',
+    'growth.12_months': '12 Months',
+
+    // Health Tips
+    'tips.title': 'Health Tips',
+    'tips.subtitle': 'Evidence-based advice for you and your baby',
+
+    // Profile
+    'profile.title': 'Profile',
+    'profile.subtitle': 'Manage your information',
+    'profile.name': "Mother's Profile",
+    'profile.dob_not_set': 'Due date or child\'s DOB: Not set',
+    'profile.edit': 'Edit Profile',
+
+    // Settings
+    'settings.title': 'Settings',
+    'settings.notifications': 'Notifications',
+    'settings.language': 'Language',
+    'settings.preferences': 'App Preferences',
+    'settings.export': 'Export Data',
+    'settings.help': 'Help & Support',
+    'settings.about': 'About',
+
+    // Notifications Modal
+    'notifications.title': 'Notifications',
+    'notifications.push': 'Push Notifications',
+    'notifications.push_desc': 'Receive alerts and reminders',
+    'notifications.vaccine': 'Vaccine Reminders',
+    'notifications.vaccine_desc': 'Get notified before vaccinations',
+    'notifications.weekly': 'Weekly Tips',
+    'notifications.weekly_desc': 'Receive health tips every week',
+    'notifications.sound': 'Sound',
+    'notifications.sound_desc': 'Play sound for notifications',
+
+    // Language Modal
+    'language.title': 'Select Language',
+
+    // Preferences Modal
+    'preferences.title': 'App Preferences',
+    'preferences.dark_mode': 'Dark Mode',
+    'preferences.dark_mode_desc': 'Use dark theme throughout the app',
+    'preferences.units': 'Unit System',
+    'preferences.units_metric': 'Metric (kg, cm)',
+    'preferences.units_imperial': 'Imperial (lb, in)',
+    'preferences.data_saver': 'Data Saver',
+    'preferences.data_saver_desc': 'Reduce image quality to save data',
+
+    // Export Modal
+    'export.title': 'Export Data',
+    'export.pdf': 'Export as PDF',
+    'export.pdf_desc': 'Comprehensive health report document',
+    'export.csv': 'Export as CSV',
+    'export.csv_desc': 'Spreadsheet-compatible data file',
+    'export.share': 'Share Report',
+    'export.share_desc': 'Share with your healthcare provider',
+
+    // Help Modal
+    'help.title': 'Help & Support',
+    'help.contact_text': 'Need help using MwanaCare? Our support team is here to assist you with any questions or concerns. We typically respond within 24 hours.',
+    'help.contact_button': 'Contact Support',
+    'help.faq': 'Frequently Asked Questions',
+
+    // About Modal
+    'about.title': 'About',
+    'about.description': 'Maternal & Child Health Companion',
+    'about.version': 'Version',
+    'about.build': 'Build',
+    'about.licenses': 'Open Source Licenses',
+    'about.privacy': 'Privacy Policy',
+
+    // Tab Bar
+    'tab.home': 'Home',
+    'tab.vaccines': 'Vaccines',
+    'tab.growth': 'Growth',
+    'tab.tips': 'Tips',
+    'tab.profile': 'Profile',
+
+    // Stats
+    'stat.on': 'On',
+    'stat.off': 'Off',
+  },
+
+  shona: {
+    // App
+    'app.name': 'MwanaCare',
+    'app.tagline': 'Utano hwaAmai neMwana',
+
+    // Header
+    'header.subtitle': 'Utano hwaAmai neMwana',
+
+    // Dashboard
+    'dashboard.hero.title': 'Tinokugamuchirai ku MwanaCare',
+    'dashboard.hero.subtitle': 'Mubatsiri wako weutano hwaamai nemwana',
+    'dashboard.hero.button': 'Ona Dashboard',
+    'dashboard.overview': 'Mhedzisiro yeUtano',
+    'dashboard.baby_weight': 'Huremu hweMwana',
+    'dashboard.baby_height': 'Kureba kweMwana',
+    'dashboard.week': 'Vhiki yeNhumbu',
+    'dashboard.weeks': 'mavhiki',
+    'dashboard.next_vaccine': 'Jekiso Rinotevera',
+    'dashboard.next_vaccine_value': 'Mu 2w',
+    'dashboard.tip_title': 'Rairo yeUtano yanhasi',
+    'dashboard.tip_title_stay': 'Ramba uchiita kunwa mvura',
+    'dashboard.tip_body_stay': 'Iwa mvura inosvika 8-10 magirazi pazuva panguva yenhumbu. Kunwa mvura zvakaringana kunobatsira mvura yeamniotic.',
+    'dashboard.quick_actions': 'Zviito Zvinokurumidza',
+    'dashboard.set_reminder': 'Isa Chiyambudzo',
+    'dashboard.contact_clinic': 'Bata Kliniki',
+    'dashboard.symptoms': 'Zviratidzo',
+    'dashboard.nearby_clinic': 'Kliniki iri pedyo',
+
+    // Vaccine
+    'vaccine.title': 'Purogiramu yeJekiso',
+    'vaccine.subtitle': 'Bata kuti uone kuti wapedza',
+    'vaccine.at_birth': 'Pakuberekwa',
+    'vaccine.6_weeks': '6 Mavhiki',
+    'vaccine.10_weeks': '10 Mavhiki',
+    'vaccine.14_weeks': '14 Mavhiki',
+    'vaccine.9_months': '9 Mwedzi',
+    'vaccine.18_months': '18 Mwedzi',
+
+    // Growth
+    'growth.title': 'Kutevedzera Kukura',
+    'growth.subtitle': 'Tarisa kukura kwemwana wako',
+    'growth.placeholder_title': 'Tevedzera Kukura Nekufamba Kwenguva',
+    'growth.placeholder_text': 'Nyora huremu, kureba, nekukura kwemusoro wemwana wako pacheck-up yega yega. Machati anozoonekwa kana wave nezvakanyorwa.',
+    'growth.add_measurement': 'Wedzera Chiyero',
+    'growth.milestones': 'Rondedzero yeMatanho',
+    'growth.1_month': 'Mwedzi 1',
+    'growth.3_months': 'Mwedzi 3',
+    'growth.6_months': 'Mwedzi 6',
+    'growth.9_months': 'Mwedzi 9',
+    'growth.12_months': 'Mwedzi 12',
+
+    // Health Tips
+    'tips.title': 'Mazano eUtano',
+    'tips.subtitle': 'Mazano ane humbowo hwesainzi iwe nemwana wako',
+
+    // Profile
+    'profile.title': 'Purofiri',
+    'profile.subtitle': 'Chengetedza ruzivo rwako',
+    'profile.name': 'Purofiri yaAmai',
+    'profile.dob_not_set': 'Zuva rekuzvara kana DOB yemwana: Haina kuiswa',
+    'profile.edit': 'Edita Purofiri',
+
+    // Settings
+    'settings.title': 'Zvirongwa',
+    'settings.notifications': 'Ziviso',
+    'settings.language': 'Mutauro',
+    'settings.preferences': 'Zvaunoda muApp',
+    'settings.export': 'Tumira Dhata',
+    'settings.help': 'Rubatsiro neRutsigiro',
+    'settings.about': 'Nezve',
+
+    // Notifications Modal
+    'notifications.title': 'Ziviso',
+    'notifications.push': 'Ziviso dzinobuda',
+    'notifications.push_desc': 'Gamuchira zvibvumirano neziviso',
+    'notifications.vaccine': 'Zviyeuchidzo zveJekiso',
+    'notifications.vaccine_desc': 'Ivwa nezve majekiso asati asvika',
+    'notifications.weekly': 'Mazano evhiki',
+    'notifications.weekly_desc': 'Gamuchira mazano eutano evhiki',
+    'notifications.sound': 'Ruzha',
+    'notifications.sound_desc': 'Ridza ruzha kune ziviso',
+
+    // Language Modal
+    'language.title': 'Sarudza Mutauro',
+
+    // Preferences Modal
+    'preferences.title': 'Zvaunoda muApp',
+    'preferences.dark_mode': 'Rima Modi',
+    'preferences.dark_mode_desc': 'Shandisa theme yerima muapp',
+    'preferences.units': 'Chiyero',
+    'preferences.units_metric': 'Metric (kg, cm)',
+    'preferences.units_imperial': 'Imperial (lb, in)',
+    'preferences.data_saver': 'Chengetedza Dhata',
+    'preferences.data_saver_desc': 'Deredza mhando yemifananidzo kuti chengetedze dhata',
+
+    // Export Modal
+    'export.title': 'Tumira Dhata',
+    'export.pdf': 'Tumira sePDF',
+    'export.pdf_desc': 'Gwaro rizere regwaro reutano',
+    'export.csv': 'Tumira seCSV',
+    'export.csv_desc': 'Faira rinoenderana ne spreadsheet',
+    'export.share': 'Govana Report',
+    'export.share_desc': 'Govana nemushandi weutano wako',
+
+    // Help Modal
+    'help.title': 'Rubatsiro neRutsigiro',
+    'help.contact_text': 'Unoda rubatsiro kushandisa MwanaCare? Timu yedu yerutsigiro iripo kukubatsira nemibvunzo yako. Tinopindura mukati meawa 24.',
+    'help.contact_button': 'Bata Rutsigiro',
+    'help.faq': 'Mibvunzo Inowanzo Bvunzwa',
+
+    // About Modal
+    'about.title': 'Nezve',
+    'about.description': 'Mubatsiri weUtano hwaAmai neMwana',
+    'about.version': 'Vhezheni',
+    'about.build': 'Kuvaka',
+    'about.licenses': 'Zvibvumirano zve Open Source',
+    'about.privacy': 'Mutemo wePrivacy',
+
+    // Tab Bar
+    'tab.home': 'Musha',
+    'tab.vaccines': 'Majekiso',
+    'tab.growth': 'Kukura',
+    'tab.tips': 'Mazano',
+    'tab.profile': 'Purofiri',
+
+    // Stats
+    'stat.on': 'Yem',
+    'stat.off': 'Yadzima',
+  },
+
+  ndebele: {
+    // App
+    'app.name': 'MwanaCare',
+    'app.tagline': 'Impilo kaMama noMntwana',
+
+    // Header
+    'header.subtitle': 'Impilo kaMama noMntwana',
+
+    // Dashboard
+    'dashboard.hero.title': 'Siyakwamukela ku MwanaCare',
+    'dashboard.hero.subtitle': 'Umhambi wakho wezempilo kamama nomntwana',
+    'dashboard.hero.button': 'Bona iDashboard',
+    'dashboard.overview': 'Umhlahlandlela weZempilo',
+    'dashboard.baby_weight': 'Isisindo soMntwana',
+    'dashboard.baby_height': 'Ubude boMntwana',
+    'dashboard.week': 'Iviki loMithi',
+    'dashboard.weeks': 'amaviki',
+    'dashboard.next_vaccine': 'Umjovo Olandelayo',
+    'dashboard.next_vaccine_value': 'Nge 2w',
+    'dashboard.tip_title': 'Icebiso leZempilo lanamuhla',
+    'dashboard.tip_title_stay': 'Hlala uphuza amanzi',
+    'dashboard.tip_body_stay': 'Phuza okungenani 8-10 izingilazi zamanzi ngosuku ngesikhathi sokumitha. Ukugcina amanzi emzimbeni kusiza izinga le-amniotic fluid.',
+    'dashboard.quick_actions': 'Izenzo Ezisheshayo',
+    'dashboard.set_reminder': 'Setha Isikhumbuzo',
+    'dashboard.contact_clinic': 'Xhumana neKliniki',
+    'dashboard.symptoms': 'Izimpawu',
+    'dashboard.nearby_clinic': 'IKliniki Eseduze',
+
+    // Vaccine
+    'vaccine.title': 'Uhlelo lweMajovo',
+    'vaccine.subtitle': 'Thepha ukuba uphawule njengophelele',
+    'vaccine.at_birth': 'Ekuzalweni',
+    'vaccine.6_weeks': 'Amaviki 6',
+    'vaccine.10_weeks': 'Amaviki 10',
+    'vaccine.14_weeks': 'Amaviki 14',
+    'vaccine.9_months': 'Izinyanga 9',
+    'vaccine.18_months': 'Izinyanga 18',
+
+    // Growth
+    'growth.title': 'Ukulandela Ukukhula',
+    'growth.subtitle': 'Qaphela ukukhula komntwana wakho',
+    'growth.placeholder_title': 'Landela Ukukhula Ngokuhamba Kwesikhathi',
+    'growth.placeholder_text': 'Bhala isisindo, ubude, nobukhulu bekhanda lomntwana wakho ku-check-up ngayinye. Amashadi azovela uma usunezilinganiso.',
+    'growth.add_measurement': 'Engeza Isilinganiso',
+    'growth.milestones': 'Uhlu lweZigaba',
+    'growth.1_month': 'Inyanga 1',
+    'growth.3_months': 'Izinyanga 3',
+    'growth.6_months': 'Izinyanga 6',
+    'growth.9_months': 'Izinyanga 9',
+    'growth.12_months': 'Izinyanga 12',
+
+    // Health Tips
+    'tips.title': 'Amaqhinga eZempilo',
+    'tips.subtitle': 'Amaqhinga anobufakazi besayensi wena nomntwana wakho',
+
+    // Profile
+    'profile.title': 'Iphrofayela',
+    'profile.subtitle': 'Phatha ulwazi lwakho',
+    'profile.name': 'Iphrofayela kaMama',
+    'profile.dob_not_set': 'Usuku lokubeletha noma i-DOB yomntwana: Ayisethiwe',
+    'profile.edit': 'Hlela Iphrofayela',
+
+    // Settings
+    'settings.title': 'Izilungiselelo',
+    'settings.notifications': 'Izaziso',
+    'settings.language': 'Ulimi',
+    'settings.preferences': 'Izintandokazi zeApp',
+    'settings.export': 'Thengisa Idatha',
+    'settings.help': 'Usizo nokusekelwa',
+    'settings.about': 'Mayelana',
+
+    // Notifications Modal
+    'notifications.title': 'Izaziso',
+    'notifications.push': 'Izaziso eziPush',
+    'notifications.push_desc': 'Thola izexwayiso nezikhumbuzo',
+    'notifications.vaccine': 'Izikhumbuzo zeMjovo',
+    'notifications.vaccine_desc': 'Yaziswa ngaphambi kwemijovo',
+    'notifications.weekly': 'Amaqhinga eViki',
+    'notifications.weekly_desc': 'Thola amaqhinga ezempilo eviki',
+    'notifications.sound': 'Umsindo',
+    'notifications.sound_desc': 'Dlala umsindo wezaziso',
+
+    // Language Modal
+    'language.title': 'Khetha Ulimi',
+
+    // Preferences Modal
+    'preferences.title': 'Izintandokazi zeApp',
+    'preferences.dark_mode': 'Imodi Emnyama',
+    'preferences.dark_mode_desc': 'Sebenzisa itimu emnyama kuwo wonke umfundi',
+    'preferences.units': 'Isistimu yamayunithi',
+    'preferences.units_metric': 'Metric (kg, cm)',
+    'preferences.units_imperial': 'Imperial (lb, in)',
+    'preferences.data_saver': 'Ugcino lweData',
+    'preferences.data_saver_desc': 'Yehlisa ikhwalithi yezithombe ukonga idatha',
+
+    // Export Modal
+    'export.title': 'Thengisa Idatha',
+    'export.pdf': 'Thengisa ngePDF',
+    'export.pdf_desc': 'Idokhumenti ephelele yombiko wezempilo',
+    'export.csv': 'Thengisa ngeCSV',
+    'export.csv_desc': 'Ifayili ehambisana ne-spreadsheet',
+    'export.share': 'Yabelana ngeReport',
+    'export.share_desc': 'Yabelana nomsebenzi wakho wezempilo',
+
+    // Help Modal
+    'help.title': 'Usizo nokusekelwa',
+    'help.contact_text': 'Udinga usizo usebenzisa i-MwanaCare? Ithimba lethu lokusekelwa likhona ukukusiza ngemibuzo yakho. Siphendula phakathi kwamahora angu-24.',
+    'help.contact_button': 'Xhumana noSekelo',
+    'help.faq': 'Imibuzo Evame Ukubuzwa',
+
+    // About Modal
+    'about.title': 'Mayelana',
+    'about.description': 'Umhambi weZempilo kaMama noMntwana',
+    'about.version': 'Inguqulo',
+    'about.build': 'Ukwakha',
+    'about.licenses': 'Izilayisensi ze-Open Source',
+    'about.privacy': 'Inqubomgomo yobumfihlo',
+
+    // Tab Bar
+    'tab.home': 'Ikhaya',
+    'tab.vaccines': 'Imijovo',
+    'tab.growth': 'Ukukhula',
+    'tab.tips': 'Amaqhinga',
+    'tab.profile': 'Iphrofayela',
+
+    // Stats
+    'stat.on': 'Iphe',
+    'stat.off': 'Icishiwe',
+  },
+};
+
+// Translation Context
+interface TranslationContextType {
+  locale: Language;
+  t: (key: string) => string;
+  setLocale: (lang: Language) => void;
+}
+
+const TranslationContext = React.createContext<TranslationContextType>({
+  locale: 'english',
+  t: (key: string) => key,
+  setLocale: () => {},
+});
+
+function useTranslation() {
+  return React.useContext(TranslationContext);
+}
+
+// Language Provider
+function LanguageProvider({ children, language, onLanguageChange }: {
+  children: React.ReactNode;
+  language: Language;
+  onLanguageChange: (lang: Language) => void;
+}) {
+  const t = (key: string): string => {
+    return TRANSLATIONS[language]?.[key] ?? TRANSLATIONS['english']?.[key] ?? key;
+  };
+
+  return (
+    <TranslationContext.Provider value={{ locale: language, t, setLocale: onLanguageChange }}>
+      {children}
+    </TranslationContext.Provider>
+  );
+}
+
 // ---------- FAQ Data ----------
 const FAQ_ITEMS = [
   {
-    question: 'How do I track my baby\'s growth?',
-    answer: 'Go to the Growth tab and tap "Add Measurement" to record your baby\'s weight, height, and head circumference. Charts will automatically update to show progress over time.',
+    question: 'help.faq.q1',
+    answer: 'help.faq.a1',
   },
   {
-    question: 'How are vaccine reminders set?',
-    answer: 'Navigate to Settings > Notifications and enable "Vaccine Reminders". You\'ll receive alerts before each scheduled immunization based on your baby\'s age.',
+    question: 'help.faq.q2',
+    answer: 'help.faq.a2',
   },
   {
-    question: 'Can I share my child\'s health data?',
-    answer: 'Yes! Use the "Export Data" option in Settings to generate a PDF or CSV report. You can then share it with your healthcare provider via your preferred messaging app.',
+    question: 'help.faq.q3',
+    answer: 'help.faq.a3',
   },
   {
-    question: 'How do I change the app language?',
-    answer: 'Go to Settings > Language and select your preferred language. The app currently supports English, Shona, and Ndebele.',
+    question: 'help.faq.q4',
+    answer: 'help.faq.a4',
   },
 ];
+
+// Add FAQ translations
+const FAQ_TRANSLATIONS: Record<string, { question: string; answer: string }> = {
+  'help.faq.q1': { question: 'How do I track my baby\'s growth?', answer: 'Go to the Growth tab and tap "Add Measurement" to record your baby\'s weight, height, and head circumference. Charts will automatically update to show progress over time.' },
+  'help.faq.q2': { question: 'How are vaccine reminders set?', answer: 'Navigate to Settings > Notifications and enable "Vaccine Reminders". You\'ll receive alerts before each scheduled immunization based on your baby\'s age.' },
+  'help.faq.q3': { question: 'Can I share my child\'s health data?', answer: 'Yes! Use the "Export Data" option in Settings to generate a PDF or CSV report. You can then share it with your healthcare provider via your preferred messaging app.' },
+  'help.faq.q4': { question: 'How do I change the app language?', answer: 'Go to Settings > Language and select your preferred language. The app currently supports English, Shona, and Ndebele.' },
+];
+
+// Add Shona FAQ translations
+FAQ_TRANSLATIONS['shona.help.faq.q1'] = { question: 'Ndingatevedzera sei kukura kwemwana wangu?', answer: 'Enda kuGrowth tab wobva wabaya "Add Measurement" kunyora huremu, kureba, nekukura kwemusoro wemwana wako. Machati anozogadziriswa otomatiki kuratidza fambiro mberi nekufamba kwenguva.' };
+FAQ_TRANSLATIONS['shona.help.faq.q2'] = { question: 'Zviyeuchidzo zvejekiso zvinoswa sei?', answer: 'Enda kuSettings > Notifications wobva wagonesa "Vaccine Reminders". Uchagamuchira zviyeuchidzo zvisati zvasvika zvichienderana nezera remwana wako.' };
+FAQ_TRANSLATIONS['shona.help.faq.q3'] = { question: 'Ndingagovana here data yeutano yemwana wangu?', answer: 'Hongu! Shandisa "Export Data" muSettings kugadzira PDF kana CSV report. Unogona kuigovana nemushandi weutano wako kuburikidza neapp yekutumira meseji.' };
+FAQ_TRANSLATIONS['shona.help.faq.q4'] = { question: 'Ndoshandura sei mutauro weapp?', answer: 'Enda kuSettings > Language wobva wasarudza mutauro waunoda. Iyi app inotsigira Chirungu, chiShona, neSiNdebele.' };
+
+// Add Ndebele FAQ translations
+FAQ_TRANSLATIONS['ndebele.help.faq.q1'] = { question: 'Ngisilandela kanjani ukukhula komntwana wami?', answer: 'Yana ku-Growth tab uthephe "Add Measurement" ukubhala isisindo, ubude, nobukhulu bekhanda lomntwana wakho. Amashadi azohleleka ngokuzenzakalelayo ukukhombisa inqubekela phambili.' };
+FAQ_TRANSLATIONS['ndebele.help.faq.q2'] = { question: 'Izikhumbuzo zemijovo zisethwa kanjani?', answer: 'Yana ku-Settings > Notifications unikhethe "Vaccine Reminders". Uzothola izikhumbuzo ngaphambi komjovo ngamunye ohleliwe ngokweminyaka yomntwana wakho.' };
+FAQ_TRANSLATIONS['ndebele.help.faq.q3'] = { question: 'Ngingabelana ngemininingwane yezempilo yomntwana wami?', answer: 'Yebo! Sebenzisa "Export Data" ku-Settings ukukhiqiza umbiko wePDF noma we-CSV. Ungase wabelane ngayo nomsebenzi wakho wezempilo nge-app yakho yokuthumela imilayezo.' };
+FAQ_TRANSLATIONS['ndebele.help.faq.q4'] = { question: 'Ngilishintsha kanjani ulimi lwe-app?', answer: 'Yana ku-Settings > Language ukhethe ulimi oluthandayo. I-app usekela isiNgisi, isiShona, kanye ne-isiNdebele.' };
 
 // ---------- Data ----------
 const HEALTH_TIPS: HealthTip[] = [
@@ -564,12 +1013,13 @@ function AnimatedCard({ children, delay = 0, style }: any) {
 }
 
 function TabBar({ active, onTabChange }: { active: Tab; onTabChange: (t: Tab) => void }) {
+  const { t } = useTranslation();
   const tabs: { key: Tab; label: string; icon: string; family?: string; activeColor: string }[] = [
-    { key: 'dashboard', label: 'Home', icon: 'home', family: 'Ionicons', activeColor: COLORS.primary },
-    { key: 'vaccines', label: 'Vaccines', icon: 'needle', activeColor: COLORS.secondary },
-    { key: 'tracker', label: 'Growth', icon: 'chart-line', family: 'MaterialCommunityIcons', activeColor: COLORS.accent },
-    { key: 'tips', label: 'Tips', icon: 'lightbulb-outline', family: 'MaterialCommunityIcons', activeColor: COLORS.rose },
-    { key: 'profile', label: 'Profile', icon: 'account-circle', family: 'MaterialCommunityIcons', activeColor: COLORS.indigo },
+    { key: 'dashboard', label: t('tab.home'), icon: 'home', family: 'Ionicons', activeColor: COLORS.primary },
+    { key: 'vaccines', label: t('tab.vaccines'), icon: 'needle', activeColor: COLORS.secondary },
+    { key: 'tracker', label: t('tab.growth'), icon: 'chart-line', family: 'MaterialCommunityIcons', activeColor: COLORS.accent },
+    { key: 'tips', label: t('tab.tips'), icon: 'lightbulb-outline', family: 'MaterialCommunityIcons', activeColor: COLORS.rose },
+    { key: 'profile', label: t('tab.profile'), icon: 'account-circle', family: 'MaterialCommunityIcons', activeColor: COLORS.indigo },
   ];
 
   return (
@@ -666,6 +1116,7 @@ function StatCard({
 }
 
 function Dashboard() {
+  const { t } = useTranslation();
   const [currentWeek] = useState(32);
   const [babyWeight] = useState('3.2');
   const [babyHeight] = useState('49.5');
@@ -692,12 +1143,12 @@ function Dashboard() {
             bgColor="rgba(255,255,255,0.2)"
             containerSize={52}
           />
-          <Text style={styles.heroTitle}>Welcome to MwanaCare</Text>
+          <Text style={styles.heroTitle}>{t('dashboard.hero.title')}</Text>
           <Text style={styles.heroSubtitle}>
-            Your companion for maternal and child health
+            {t('dashboard.hero.subtitle')}
           </Text>
           <TouchableOpacity style={styles.heroButton}>
-            <Text style={styles.heroButtonText}>View Dashboard</Text>
+            <Text style={styles.heroButtonText}>{t('dashboard.hero.button')}</Text>
             <Feather name="arrow-right" size={16} color={COLORS.white} />
           </TouchableOpacity>
         </LinearGradient>
@@ -705,12 +1156,12 @@ function Dashboard() {
 
       {/* Quick Stats */}
       <AnimatedCard delay={100}>
-        <Text style={styles.sectionTitle}>Health Overview</Text>
+        <Text style={styles.sectionTitle}>{t('dashboard.overview')}</Text>
       </AnimatedCard>
       <View style={styles.statsRow}>
         <AnimatedCard delay={150} style={{ flex: 1 }}>
           <StatCard
-            title="Baby's Weight"
+            title={t('dashboard.baby_weight')}
             value={babyWeight}
             unit="kg"
             color={COLORS.primary}
@@ -719,7 +1170,7 @@ function Dashboard() {
         </AnimatedCard>
         <AnimatedCard delay={200} style={{ flex: 1 }}>
           <StatCard
-            title="Baby's Height"
+            title={t('dashboard.baby_height')}
             value={babyHeight}
             unit="cm"
             color={COLORS.secondary}
@@ -730,17 +1181,17 @@ function Dashboard() {
       <View style={styles.statsRow}>
         <AnimatedCard delay={250} style={{ flex: 1 }}>
           <StatCard
-            title="Pregnancy Week"
+            title={t('dashboard.week')}
             value={`${currentWeek}`}
-            unit="weeks"
+            unit={t('dashboard.weeks')}
             color={COLORS.accent}
             icon="calendar-clock"
           />
         </AnimatedCard>
         <AnimatedCard delay={300} style={{ flex: 1 }}>
           <StatCard
-            title="Next Vaccine"
-            value="In 2w"
+            title={t('dashboard.next_vaccine')}
+            value={t('dashboard.next_vaccine_value')}
             unit=""
             color={COLORS.rose}
             icon="needle"
@@ -750,7 +1201,7 @@ function Dashboard() {
 
       {/* Health Tip Spotlight */}
       <AnimatedCard delay={350}>
-        <Text style={styles.sectionTitle}>Health Tip of the Day</Text>
+        <Text style={styles.sectionTitle}>{t('dashboard.tip_title')}</Text>
         <LinearGradient
           colors={['#FFFBEB', '#FFF7ED']}
           start={{ x: 0, y: 0 }}
@@ -766,10 +1217,9 @@ function Dashboard() {
               containerSize={48}
             />
             <View style={styles.tipContent}>
-              <Text style={styles.tipTitle}>Stay Hydrated</Text>
+              <Text style={styles.tipTitle}>{t('dashboard.tip_title_stay')}</Text>
               <Text style={styles.tipBody}>
-                Drink at least 8-10 glasses of water daily during pregnancy.
-                Proper hydration supports healthy amniotic fluid levels.
+                {t('dashboard.tip_body_stay')}
               </Text>
             </View>
           </View>
@@ -778,7 +1228,7 @@ function Dashboard() {
 
       {/* Quick Actions */}
       <AnimatedCard delay={400}>
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
+        <Text style={styles.sectionTitle}>{t('dashboard.quick_actions')}</Text>
       </AnimatedCard>
       <View style={styles.quickActionsRow}>
         <AnimatedCard delay={420} style={{ flex: 1 }}>
@@ -790,7 +1240,7 @@ function Dashboard() {
               bgColor={COLORS.secondary + '15'}
               containerSize={46}
             />
-            <Text style={styles.quickActionLabel}>Set Reminder</Text>
+            <Text style={styles.quickActionLabel}>{t('dashboard.set_reminder')}</Text>
           </TouchableOpacity>
         </AnimatedCard>
         <AnimatedCard delay={450} style={{ flex: 1 }}>
@@ -802,7 +1252,7 @@ function Dashboard() {
               bgColor={COLORS.primary + '15'}
               containerSize={46}
             />
-            <Text style={styles.quickActionLabel}>Contact Clinic</Text>
+            <Text style={styles.quickActionLabel}>{t('dashboard.contact_clinic')}</Text>
           </TouchableOpacity>
         </AnimatedCard>
         <AnimatedCard delay={480} style={{ flex: 1 }}>
@@ -814,7 +1264,7 @@ function Dashboard() {
               bgColor={COLORS.rose + '15'}
               containerSize={46}
             />
-            <Text style={styles.quickActionLabel}>Symptoms</Text>
+            <Text style={styles.quickActionLabel}>{t('dashboard.symptoms')}</Text>
           </TouchableOpacity>
         </AnimatedCard>
         <AnimatedCard delay={510} style={{ flex: 1 }}>
@@ -826,7 +1276,7 @@ function Dashboard() {
               bgColor={COLORS.accent + '15'}
               containerSize={46}
             />
-            <Text style={styles.quickActionLabel}>Nearby Clinic</Text>
+            <Text style={styles.quickActionLabel}>{t('dashboard.nearby_clinic')}</Text>
           </TouchableOpacity>
         </AnimatedCard>
       </View>
@@ -1111,6 +1561,7 @@ function HealthTips() {
 }
 
 function Profile() {
+  const { t, setLocale } = useTranslation();
   // Settings state
   const [settings, setSettings] = useState<SettingsState>({
     notifications: {
@@ -1119,10 +1570,10 @@ function Profile() {
       weeklyTips: false,
       soundEnabled: true,
     },
-    language: 'english',
+    language: 'english' as Language,
     preferences: {
       darkMode: false,
-      unitSystem: 'metric',
+      unitSystem: 'metric' as UnitSystem,
       dataSaver: false,
     },
   });
@@ -1140,6 +1591,7 @@ function Profile() {
 
   const updateLanguage = (lang: Language) => {
     setSettings((prev) => ({ ...prev, language: lang }));
+    setLocale(lang); // Update global language
   };
 
   const updatePreferences = (key: keyof AppPreferences, value: boolean | UnitSystem) => {
@@ -1150,6 +1602,16 @@ function Profile() {
   };
 
   const currentLang = LANGUAGES.find((l) => l.key === settings.language);
+
+  // Get localized FAQ items
+  const getLocalizedFaq = (faq: typeof FAQ_ITEMS[0]) => {
+    const locale = settings.language;
+    if (locale === 'english') {
+      return FAQ_TRANSLATIONS[faq.question] || { question: faq.question, answer: faq.answer };
+    }
+    const localizedKey = `${locale}.${faq.question}`;
+    return FAQ_TRANSLATIONS[localizedKey] || FAQ_TRANSLATIONS[faq.question] || { question: faq.question, answer: faq.answer };
+  };
 
   return (
     <ScrollView style={styles.tabContent} showsVerticalScrollIndicator={false}>
@@ -1164,8 +1626,8 @@ function Profile() {
               containerSize={40}
             />
             <View style={{ marginLeft: 12 }}>
-              <Text style={styles.sectionTitle}>Profile</Text>
-              <Text style={styles.sectionSubtitle}>Manage your information</Text>
+              <Text style={styles.sectionTitle}>{t('profile.title')}</Text>
+              <Text style={styles.sectionSubtitle}>{t('profile.subtitle')}</Text>
             </View>
           </View>
         </View>
@@ -1191,20 +1653,20 @@ function Profile() {
               <MaterialIcons name="verified" size={16} color={COLORS.info} />
             </View>
           </View>
-          <Text style={styles.profileName}>Mother's Profile</Text>
+          <Text style={styles.profileName}>{t('profile.name')}</Text>
           <View style={styles.profileDetailRow}>
             <MaterialIcons name="calendar-today" size={14} color={COLORS.gray500} />
-            <Text style={styles.profileDetail}> Due date or child's DOB: Not set</Text>
+            <Text style={styles.profileDetail}> {t('profile.dob_not_set')}</Text>
           </View>
           <TouchableOpacity style={styles.editButton}>
             <Feather name="edit-2" size={14} color={COLORS.primary} />
-            <Text style={styles.editButtonText}> Edit Profile</Text>
+            <Text style={styles.editButtonText}> {t('profile.edit')}</Text>
           </TouchableOpacity>
         </LinearGradient>
       </AnimatedCard>
 
       <AnimatedCard delay={150}>
-        <Text style={styles.sectionTitle}>Settings</Text>
+        <Text style={styles.sectionTitle}>{t('settings.title')}</Text>
       </AnimatedCard>
       <AnimatedCard delay={180}>
         <View style={styles.settingsSection}>
@@ -1220,10 +1682,10 @@ function Profile() {
               bgColor={COLORS.primary + '12'}
               containerSize={34}
             />
-            <Text style={styles.settingText}>Notifications</Text>
+            <Text style={styles.settingText}>{t('settings.notifications')}</Text>
             <View style={styles.settingValueBadge}>
               <Text style={styles.settingValueText}>
-                {settings.notifications.pushNotifications ? 'On' : 'Off'}
+                {settings.notifications.pushNotifications ? t('stat.on') : t('stat.off')}
               </Text>
             </View>
             <Feather name="chevron-right" size={20} color={COLORS.gray300} />
@@ -1241,7 +1703,7 @@ function Profile() {
               bgColor={COLORS.secondary + '12'}
               containerSize={34}
             />
-            <Text style={styles.settingText}>Language</Text>
+            <Text style={styles.settingText}>{t('settings.language')}</Text>
             <View style={styles.settingValueBadge}>
               <Text style={styles.settingValueText}>
                 {currentLang?.label || 'English'}
@@ -1262,7 +1724,7 @@ function Profile() {
               bgColor={COLORS.teal + '12'}
               containerSize={34}
             />
-            <Text style={styles.settingText}>App Preferences</Text>
+            <Text style={styles.settingText}>{t('settings.preferences')}</Text>
             <Feather name="chevron-right" size={20} color={COLORS.gray300} />
           </TouchableOpacity>
 
@@ -1278,7 +1740,7 @@ function Profile() {
               bgColor={COLORS.accent + '12'}
               containerSize={34}
             />
-            <Text style={styles.settingText}>Export Data</Text>
+            <Text style={styles.settingText}>{t('settings.export')}</Text>
             <Feather name="chevron-right" size={20} color={COLORS.gray300} />
           </TouchableOpacity>
 
@@ -1294,7 +1756,7 @@ function Profile() {
               bgColor={COLORS.rose + '12'}
               containerSize={34}
             />
-            <Text style={styles.settingText}>Help & Support</Text>
+            <Text style={styles.settingText}>{t('settings.help')}</Text>
             <Feather name="chevron-right" size={20} color={COLORS.gray300} />
           </TouchableOpacity>
 
@@ -1310,7 +1772,7 @@ function Profile() {
               bgColor={COLORS.gray100}
               containerSize={34}
             />
-            <Text style={styles.settingText}>About</Text>
+            <Text style={styles.settingText}>{t('settings.about')}</Text>
             <Feather name="chevron-right" size={20} color={COLORS.gray300} />
           </TouchableOpacity>
         </View>
@@ -1319,15 +1781,15 @@ function Profile() {
       {/* ---- Notifications Modal ---- */}
       <SettingsModal
         visible={activeModal === 'notifications'}
-        title="Notifications"
+        title={t('notifications.title')}
         onClose={() => setActiveModal(null)}
       >
         <View style={styles.settingsModalItem}>
           <View style={styles.settingsModalItemLabel}>
             <MaterialIcons name="notifications-active" size={20} color={COLORS.primary} />
             <View>
-              <Text style={styles.settingsModalItemText}>Push Notifications</Text>
-              <Text style={styles.settingsModalItemDesc}>Receive alerts and reminders</Text>
+              <Text style={styles.settingsModalItemText}>{t('notifications.push')}</Text>
+              <Text style={styles.settingsModalItemDesc}>{t('notifications.push_desc')}</Text>
             </View>
           </View>
           <ToggleSwitch
@@ -1339,8 +1801,8 @@ function Profile() {
           <View style={styles.settingsModalItemLabel}>
             <MaterialIcons name="vaccines" size={20} color={COLORS.secondary} />
             <View>
-              <Text style={styles.settingsModalItemText}>Vaccine Reminders</Text>
-              <Text style={styles.settingsModalItemDesc}>Get notified before vaccinations</Text>
+              <Text style={styles.settingsModalItemText}>{t('notifications.vaccine')}</Text>
+              <Text style={styles.settingsModalItemDesc}>{t('notifications.vaccine_desc')}</Text>
             </View>
           </View>
           <ToggleSwitch
@@ -1353,8 +1815,8 @@ function Profile() {
           <View style={styles.settingsModalItemLabel}>
             <MaterialIcons name="lightbulb-outline" size={20} color={COLORS.accent} />
             <View>
-              <Text style={styles.settingsModalItemText}>Weekly Tips</Text>
-              <Text style={styles.settingsModalItemDesc}>Receive health tips every week</Text>
+              <Text style={styles.settingsModalItemText}>{t('notifications.weekly')}</Text>
+              <Text style={styles.settingsModalItemDesc}>{t('notifications.weekly_desc')}</Text>
             </View>
           </View>
           <ToggleSwitch
@@ -1367,8 +1829,8 @@ function Profile() {
           <View style={styles.settingsModalItemLabel}>
             <MaterialIcons name="volume-up" size={20} color={COLORS.info} />
             <View>
-              <Text style={styles.settingsModalItemText}>Sound</Text>
-              <Text style={styles.settingsModalItemDesc}>Play sound for notifications</Text>
+              <Text style={styles.settingsModalItemText}>{t('notifications.sound')}</Text>
+              <Text style={styles.settingsModalItemDesc}>{t('notifications.sound_desc')}</Text>
             </View>
           </View>
           <ToggleSwitch
@@ -1376,271 +1838,11 @@ function Profile() {
             onValueChange={(v) => updateNotifications('soundEnabled', v)}
             disabled={!settings.notifications.pushNotifications}
           />
-        </View>
-      </SettingsModal>
-
-      {/* ---- Language Modal ---- */}
-      <SettingsModal
-        visible={activeModal === 'language'}
-        title="Select Language"
-        onClose={() => setActiveModal(null)}
-      >
-        {LANGUAGES.map((lang) => (
-          <TouchableOpacity
-            key={lang.key}
-            style={styles.radioOption}
-            onPress={() => updateLanguage(lang.key)}
-            activeOpacity={0.7}
-          >
-            <View style={styles.radioOptionLeft}>
-              <Text style={{ fontSize: 22 }}>{lang.flag}</Text>
-              <View>
-                <Text style={styles.radioLabel}>{lang.label}</Text>
-                <Text style={styles.radioNative}>{lang.native}</Text>
-              </View>
-            </View>
-            <View
-              style={[
-                styles.radioOuter,
-                settings.language === lang.key && styles.radioOuterSelected,
-              ]}
-            >
-              {settings.language === lang.key && <View style={styles.radioInner} />}
-            </View>
-          </TouchableOpacity>
-        ))}
-      </SettingsModal>
-
-      {/* ---- App Preferences Modal ---- */}
-      <SettingsModal
-        visible={activeModal === 'preferences'}
-        title="App Preferences"
-        onClose={() => setActiveModal(null)}
-      >
-        <View style={styles.settingsModalItem}>
-          <View style={styles.settingsModalItemLabel}>
-            <MaterialIcons name="dark-mode" size={20} color={COLORS.indigo} />
-            <View>
-              <Text style={styles.settingsModalItemText}>Dark Mode</Text>
-              <Text style={styles.settingsModalItemDesc}>Use dark theme throughout the app</Text>
-            </View>
-          </View>
-          <ToggleSwitch
-            value={settings.preferences.darkMode}
-            onValueChange={(v) => updatePreferences('darkMode', v)}
-          />
-        </View>
-        <View style={styles.settingsModalItem}>
-          <View style={styles.settingsModalItemLabel}>
-            <MaterialIcons name="straighten" size={20} color={COLORS.primary} />
-            <View>
-              <Text style={styles.settingsModalItemText}>Unit System</Text>
-              <Text style={styles.settingsModalItemDesc}>
-                {settings.preferences.unitSystem === 'metric' ? 'Metric (kg, cm)' : 'Imperial (lb, in)'}
-              </Text>
-            </View>
-          </View>
-          <View style={{ flexDirection: 'row', gap: 8 }}>
-            <TouchableOpacity
-              style={[
-                styles.unitToggle,
-                settings.preferences.unitSystem === 'metric' && styles.unitToggleActive,
-              ]}
-              onPress={() => updatePreferences('unitSystem', 'metric')}
-            >
-              <Text
-                style={[
-                  styles.unitToggleText,
-                  settings.preferences.unitSystem === 'metric' && styles.unitToggleTextActive,
-                ]}
-              >
-                Metric
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.unitToggle,
-                settings.preferences.unitSystem === 'imperial' && styles.unitToggleActive,
-              ]}
-              onPress={() => updatePreferences('unitSystem', 'imperial')}
-            >
-              <Text
-                style={[
-                  styles.unitToggleText,
-                  settings.preferences.unitSystem === 'imperial' && styles.unitToggleTextActive,
-                ]}
-              >
-                Imperial
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={[styles.settingsModalItem, { borderBottomWidth: 0 }]}>
-          <View style={styles.settingsModalItemLabel}>
-            <MaterialIcons name="savings" size={20} color={COLORS.success} />
-            <View>
-              <Text style={styles.settingsModalItemText}>Data Saver</Text>
-              <Text style={styles.settingsModalItemDesc}>Reduce image quality to save data</Text>
-            </View>
-          </View>
-          <ToggleSwitch
-            value={settings.preferences.dataSaver}
-            onValueChange={(v) => updatePreferences('dataSaver', v)}
-          />
-        </View>
-      </SettingsModal>
-
-      {/* ---- Export Data Modal ---- */}
-      <SettingsModal
-        visible={activeModal === 'export'}
-        title="Export Data"
-        onClose={() => setActiveModal(null)}
-      >
-        <TouchableOpacity style={styles.exportOption}>
-          <BoxIcon
-            icon="file-pdf-box"
-            size={18}
-            color={COLORS.error}
-            bgColor={COLORS.error + '12'}
-            containerSize={34}
-          />
-          <View>
-            <Text style={styles.exportOptionText}>Export as PDF</Text>
-            <Text style={styles.exportOptionDesc}>Comprehensive health report document</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.exportOption}>
-          <BoxIcon
-            icon="file-delimited-outline"
-            size={18}
-            color={COLORS.success}
-            bgColor={COLORS.success + '12'}
-            containerSize={34}
-          />
-          <View>
-            <Text style={styles.exportOptionText}>Export as CSV</Text>
-            <Text style={styles.exportOptionDesc}>Spreadsheet-compatible data file</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.exportOption, { borderBottomWidth: 0 }]}>
-          <BoxIcon
-            icon="share-variant-outline"
-            size={18}
-            color={COLORS.primary}
-            bgColor={COLORS.primary + '12'}
-            containerSize={34}
-          />
-          <View>
-            <Text style={styles.exportOptionText}>Share Report</Text>
-            <Text style={styles.exportOptionDesc}>Share with your healthcare provider</Text>
-          </View>
-        </TouchableOpacity>
-      </SettingsModal>
-
-      {/* ---- Help & Support Modal ---- */}
-      <SettingsModal
-        visible={activeModal === 'help'}
-        title="Help & Support"
-        onClose={() => setActiveModal(null)}
-      >
-        <View style={styles.contactCard}>
-          <MaterialIcons name="support-agent" size={28} color={COLORS.primary} style={{ marginBottom: 8 }} />
-          <Text style={styles.contactCardText}>
-            Need help using MwanaCare? Our support team is here to assist you with any questions or concerns. We typically respond within 24 hours.
-          </Text>
-          <TouchableOpacity style={styles.contactButton}>
-            <MaterialIcons name="mail-outline" size={18} color={COLORS.white} />
-            <Text style={styles.contactButtonText}>  Contact Support</Text>
-          </TouchableOpacity>
-        </View>
-
-        <Text style={[styles.sectionTitle, { fontSize: 16, marginBottom: 12 }]}>
-          Frequently Asked Questions
-        </Text>
-        {FAQ_ITEMS.map((faq, idx) => {
-          const isExpanded = expandedFaq === faq.question;
-          return (
-            <View key={idx} style={styles.faqItem}>
-              <TouchableOpacity
-                style={styles.faqQuestion}
-                onPress={() => setExpandedFaq(isExpanded ? null : faq.question)}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.faqQuestionText}>{faq.question}</Text>
-                <MaterialIcons
-                  name={isExpanded ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
-                  size={20}
-                  color={COLORS.gray500}
-                />
-              </TouchableOpacity>
-              {isExpanded && (
-                <View style={styles.faqAnswer}>
-                  <Text style={styles.faqAnswerText}>{faq.answer}</Text>
-                </View>
-              )}
-            </View>
-          );
-        })}
-      </SettingsModal>
-
-      {/* ---- About Modal ---- */}
-      <SettingsModal
-        visible={activeModal === 'about'}
-        title="About"
-        onClose={() => setActiveModal(null)}
-      >
-        <View style={{ alignItems: 'center', paddingVertical: 16 }}>
-          <LinearGradient
-            colors={[COLORS.primary, COLORS.primaryLight]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{
-              width: 64,
-              height: 64,
-              borderRadius: 18,
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: 12,
-              ...SHADOWS.md,
-            }}
-          >
-            <MaterialCommunityIcons name="heart-pulse" size={32} color={COLORS.white} />
-          </LinearGradient>
-          <Text style={{ fontSize: 18, fontWeight: '700', color: COLORS.gray800 }}>
-            MwanaCare
-          </Text>
-          <Text style={{ fontSize: 13, color: COLORS.gray500, marginTop: 2 }}>
-            Maternal & Child Health Companion
-          </Text>
-        </View>
-
-        <View style={styles.aboutRow}>
-          <Text style={styles.aboutLabel}>Version</Text>
-          <Text style={styles.aboutValue}>1.0.0</Text>
-        </View>
-        <View style={styles.aboutRow}>
-          <Text style={styles.aboutLabel}>Build</Text>
-          <Text style={styles.aboutValue}>2025.1</Text>
-        </View>
-
-        <TouchableOpacity style={styles.aboutLink}>
-          <Text style={styles.aboutLinkText}>Open Source Licenses</Text>
-          <MaterialIcons name="open-in-new" size={18} color={COLORS.primary} />
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.aboutLink, { borderBottomWidth: 0 }]}>
-          <Text style={styles.aboutLinkText}>Privacy Policy</Text>
-          <MaterialIcons name="open-in-new" size={18} color={COLORS.primary} />
-        </TouchableOpacity>
-      </SettingsModal>
-
-      <View style={{ height: 90 }} />
-    </ScrollView>
-  );
-}
 
 // ---------- Main App ----------
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
+  const [language, setLanguage] = useState<Language>('english');
 
   const renderScreen = () => {
     switch (activeTab) {
@@ -1660,34 +1862,42 @@ export default function App() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar style="light" />
-      <LinearGradient
-        colors={[COLORS.primary, COLORS.primaryDark]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.header}
-      >
-        <View style={styles.headerRow}>
-          <View>
-            <Text style={styles.headerTitle}>MwanaCare</Text>
-            <Text style={styles.headerSub}>Maternal & Child Health</Text>
+    <LanguageProvider language={language} onLanguageChange={setLanguage}>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar style="light" />
+        <LinearGradient
+          colors={[COLORS.primary, COLORS.primaryDark]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.header}
+        >
+          <View style={styles.headerRow}>
+            <View>
+              <Text style={styles.headerTitle}>MwanaCare</Text>
+              <HeaderTitle />
+            </View>
+            <BoxIcon
+              icon="heart-pulse"
+              size={24}
+              color={COLORS.white}
+              bgColor="rgba(255,255,255,0.2)"
+              containerSize={42}
+            />
           </View>
-          <BoxIcon
-            icon="heart-pulse"
-            size={24}
-            color={COLORS.white}
-            bgColor="rgba(255,255,255,0.2)"
-            containerSize={42}
-          />
+        </LinearGradient>
+        <View style={styles.container}>
+          {renderScreen()}
         </View>
-      </LinearGradient>
-      <View style={styles.container}>
-        {renderScreen()}
-      </View>
-      <TabBar active={activeTab} onTabChange={setActiveTab} />
-    </SafeAreaView>
+        <TabBar active={activeTab} onTabChange={setActiveTab} />
+      </SafeAreaView>
+    </LanguageProvider>
   );
+}
+
+// Small inline component for localized header subtitle
+function HeaderTitle() {
+  const { t } = useTranslation();
+  return <Text style={styles.headerSub}>{t('header.subtitle')}</Text>;
 }
 
 // ---------- Styles ----------
