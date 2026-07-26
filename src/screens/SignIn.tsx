@@ -25,15 +25,18 @@ export function SignIn({ onNavigateSignUp }: { onNavigateSignUp: () => void }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSignIn = () => {
+const handleSignIn = async () => {
     setLoading(true);
-    setTimeout(() => {
-      const result = signIn(email, password);
-      setLoading(false);
+    try {
+      const result = await signIn(email, password);
       if (!result.success) {
         Alert.alert('Sign In Failed', result.error);
       }
-    }, 300);
+    } catch (err: any) {
+      Alert.alert('Sign In Failed', err.message || 'An unexpected error occurred');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

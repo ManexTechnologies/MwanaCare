@@ -27,7 +27,7 @@ export function SignUp({ onNavigateSignIn }: { onNavigateSignIn: () => void }) {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSignUp = () => {
+const handleSignUp = async () => {
     if (!name.trim() || !email.trim() || !password.trim()) {
       Alert.alert('Validation Error', 'All fields are required');
       return;
@@ -42,13 +42,16 @@ export function SignUp({ onNavigateSignIn }: { onNavigateSignIn: () => void }) {
     }
 
     setLoading(true);
-    setTimeout(() => {
-      const result = signUp(name, email, password);
-      setLoading(false);
+    try {
+      const result = await signUp(name, email, password);
       if (!result.success) {
         Alert.alert('Sign Up Failed', result.error);
       }
-    }, 300);
+    } catch (err: any) {
+      Alert.alert('Sign Up Failed', err.message || 'An unexpected error occurred');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

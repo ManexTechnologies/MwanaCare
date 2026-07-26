@@ -54,7 +54,6 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  password: string; // In a real app, this would be hashed server-side
   babyName?: string;
   dueDate?: string; // ISO date string
   createdAt: string;
@@ -62,8 +61,8 @@ export interface User {
 
 export interface AuthState {
   currentUser: User | null;
-  users: User[];
   isAuthenticated: boolean;
+  isLoading: boolean;
 }
 
 // Growth Measurements

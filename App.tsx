@@ -98,8 +98,29 @@ function TabBar({ active, onTabChange }: { active: Tab; onTabChange: (t: Tab) =>
 
 // ---------- Auth Gate ----------
 function AuthGate({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const [authScreen, setAuthScreen] = useState<'signIn' | 'signUp'>('signIn');
+
+  // Show a loading screen while checking stored auth token
+  if (isLoading) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primaryBg, justifyContent: 'center', alignItems: 'center' }}>
+        <StatusBar style="light" />
+        <View style={{ alignItems: 'center' }}>
+          <LinearGradient
+            colors={[COLORS.primary, COLORS.primaryDark]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{ width: 80, height: 80, borderRadius: 20, alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}
+          >
+            <MaterialCommunityIcons name="heart-pulse" size={40} color={COLORS.white} />
+          </LinearGradient>
+          <Text style={{ fontSize: 20, fontWeight: '700', color: COLORS.gray800 }}>MwanaCare</Text>
+          <Text style={{ fontSize: 13, color: COLORS.gray500, marginTop: 8 }}>Loading...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   if (isAuthenticated) {
     return <>{children}</>;

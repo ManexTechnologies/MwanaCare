@@ -1,46 +1,42 @@
-# MwanaCare - UI/UX Improvement Plan ✅ COMPLETE
+# MwanaCare - Neon Database + Authentication with Vercel Serverless ✅ COMPLETE
 
-## Phase 1: Core Infrastructure ✅
-- [x] Create ThemeContext with dark/light mode support
-- [x] Update colors.ts with dark theme palette + glassmorphism tokens
-- [x] Update shadows.ts with glassmorphism shadows (frosted/soft)
-- [x] Create PressableScale component (touch feedback with scale animation)
-- [x] Create GlassCard component (reusable glassmorphism card)
-- [x] Update types/index.ts with theme context type
+## Phase 1: Database & API Foundation ✅
+- [x] Create `api/_lib/db.ts` — Neon PostgreSQL connection
+- [x] Create `api/_lib/auth.ts` — JWT token helpers
+- [x] Create `api/schema.sql` — Database tables DDL
+- [x] Create `.env.example` — Environment variable template
 
-## Phase 2: Components & Polish ✅
-- [x] Refactor StatCard with theme colors + larger icon area
-- [x] Update AnimatedCard for re-triggering animation on tab change
-- [x] Create AnimatedProgressRing component (circular progress)
-- [x] Update SettingsModal with glassmorphism styling
-- [x] Update ToggleSwitch with theme-aware tracks
-- [x] Fix GrowthTracker modal to use SettingsModal
-- [x] Add Profile edit modal (name, baby due date)
+## Phase 2: API Endpoints ✅
+- [x] Create `api/auth/register.ts` — POST /api/auth/register
+- [x] Create `api/auth/login.ts` — POST /api/auth/login
+- [x] Create `api/auth/me.ts` — GET /api/auth/me
+- [x] Create `api/measurements/index.ts` — GET/POST /api/measurements
+- [x] Create `api/vaccines/index.ts` — GET/POST /api/vaccines
+- [x] Create `api/profile/index.ts` — PUT /api/profile
+- [x] Create `api/dashboard/index.ts` — GET /api/dashboard
 
-## Phase 3: Screen Enhancements ✅
-- [x] Dashboard: progress rings, glassmorphism cards, press-scale feedback
-- [x] VaccineTracker: circular progress per age group, glassmorphism
-- [x] GrowthTracker: glassmorphism cards, SettingsModal for measurements
-- [x] HealthTips: glassmorphism styling
-- [x] Profile: glassmorphism, functional edit modal
-- [x] SignIn/SignUp: glassmorphism form cards
+## Phase 3: Frontend API Client ✅
+- [x] Create `src/api/client.ts` — Fetch wrapper with JWT auth
+- [x] Update `src/types/index.ts` — Remove password field, add isLoading
 
-## Phase 4: Navigation & App Shell ✅
-- [x] Tab bar glassmorphism effect
-- [x] Smooth fade transitions between tabs
-- [x] Header glassmorphism redesign
-- [x] Dark mode wiring across all screens
-- [x] Fix all translation gaps (hardcoded strings)
+## Phase 4: Refactor Auth & Screens ✅
+- [x] Rewrite `src/context/AuthContext.tsx` — Uses real API (register, login, profile, JWT session)
+- [x] Update `src/screens/SignIn.tsx` — Async real login flow
+- [x] Update `src/screens/SignUp.tsx` — Async real signup flow
+- [x] Update `src/screens/Profile.tsx` — Real profile API calls
+- [x] Update `App.tsx` — Add loading state for auth initialization
 
-## Key Improvements Implemented
-1. **Dark Mode** — Full dark/light theme toggle in settings, persisted
-2. **Glassmorphism** — Frosted glass cards, subtle borders, inner glow highlights
-3. **Animated Progress Rings** — Visual progress indicators for vaccines and health metrics
-4. **PressableScale** — Touch feedback with scale-down animation on all buttons
-5. **Theme-Aware Colors** — All screens dynamically respond to dark/light mode
-6. **Smooth Tab Transitions** — Fade animation between screen changes
-7. **Functional Profile Edit** — Edit name, baby name, due date via modal
-8. **Fixed GrowthTracker Modal** — Uses proper SettingsModal instead of absolute positioned overlay
-9. **SettingsModal Themed** — Now respects dark/light mode with glassmorphism
-10. **Overall Vaccine Progress** — Circular progress ring showing total immunization completion
+## Phase 5: Deployment Config ✅
+- [x] Update `vercel.json` — API function runtime + rewrite rules
+- [x] Update `package.json` — Add dependencies (@neondatabase/serverless, bcryptjs, jsonwebtoken, @vercel/node)
+- [x] Install dependencies
+
+## Deployment Instructions
+To go live, you need to:
+1. **Create a Neon database** at https://neon.tech → Create project → Copy connection string
+2. **Run the schema** against your Neon DB: `psql <connection-string> -f api/schema.sql`
+3. **Deploy to Vercel** and set environment variables:
+   - `NEON_DATABASE_URL` = your Neon connection string
+   - `JWT_SECRET` = a random secure string (32+ chars)
+4. **Note:** Dashboard, GrowthTracker, and VaccineTracker screens still use localStorage for data display. They have the API client available (`src/api/client.ts`) to connect to the backend when ready.
 

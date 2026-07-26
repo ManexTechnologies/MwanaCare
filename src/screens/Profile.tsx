@@ -74,13 +74,17 @@ export function Profile() {
     ]);
   };
 
-  const handleSaveProfile = () => {
-    updateProfile({
-      name: editName.trim() || currentUser?.name,
-      babyName: editBabyName.trim() || undefined,
-      dueDate: editDueDate.trim() || undefined,
-    });
-    setShowEditProfile(false);
+const handleSaveProfile = async () => {
+    try {
+      await updateProfile({
+        name: editName.trim() || currentUser?.name,
+        babyName: editBabyName.trim() || undefined,
+        dueDate: editDueDate.trim() || undefined,
+      });
+      setShowEditProfile(false);
+    } catch (err: any) {
+      Alert.alert('Error', err.message || 'Failed to update profile');
+    }
   };
 
   return (
