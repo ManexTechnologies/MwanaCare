@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "MwanaCare",
+    "slug": "MwanaCare",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#0D9488",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "UIViewControllerBasedStatusBarAppearance": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0D9488",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "meta": {
+        "appleMobileWebAppCapable": "yes",
+        "appleMobileWebAppStatusBarStyle": "default",
+        "appleTouchIcon": "./assets/icon.png",
+        "mobileWebAppCapable": "yes",
+        "themeColor": "#0D9488"
+      }
+    },
+    "plugins": ["expo-web-browser"]
+  }
+}
+
