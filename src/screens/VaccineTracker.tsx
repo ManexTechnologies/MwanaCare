@@ -10,6 +10,7 @@ import { VACCINES } from '../data';
 import { BoxIcon, AnimatedCard, GlassCard, PressableScale, AnimatedProgressRing } from '../components';
 import { usePersistedState } from '../storage/usePersistedState';
 import { VaccineStatusMap } from '../types';
+import { useScreenDimensions, scale, rfValue, getHorizontalPadding, getGridGap } from '../utils/responsive';
 
 const AGE_ORDER = ['At Birth', '6 Weeks', '10 Weeks', '14 Weeks', '9 Months', '18 Months'];
 const AGE_KEYS: Record<string, string> = {
@@ -55,15 +56,17 @@ export function VaccineTracker() {
   const doneVaccines = vaccines.filter((v) => v.status === 'done').length;
   const overallProgress = totalVaccines > 0 ? doneVaccines / totalVaccines : 0;
 
+  const { isSmallDevice } = useScreenDimensions();
+
   return (
-    <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16, backgroundColor: colors.primaryBg }} showsVerticalScrollIndicator={false}>
+    <ScrollView style={{ flex: 1, paddingHorizontal: getHorizontalPadding(), paddingTop: scale(16), backgroundColor: colors.primaryBg }} showsVerticalScrollIndicator={false}>
       <AnimatedCard delay={0}>
-        <View style={{ marginBottom: 16 }}>
+        <View style={{ marginBottom: scale(16) }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <BoxIcon icon="shield-check-outline" size={22} color={colors.primary} bgColor={colors.primary + '15'} containerSize={40} />
-            <View style={{ marginLeft: 12 }}>
-              <Text style={{ fontSize: 18, fontWeight: '700', color: colors.gray800, marginBottom: 4, marginTop: 4 }}>{t('vaccine.title')}</Text>
-              <Text style={{ fontSize: 13, color: colors.gray500, marginTop: -4, marginBottom: 12 }}>{t('vaccine.subtitle')}</Text>
+            <BoxIcon icon="shield-check-outline" size={scale(22)} color={colors.primary} bgColor={colors.primary + '15'} containerSize={scale(40)} />
+            <View style={{ marginLeft: scale(12) }}>
+              <Text style={{ fontSize: rfValue(18), fontWeight: '700', color: colors.gray800, marginBottom: scale(4), marginTop: scale(4) }}>{t('vaccine.title')}</Text>
+              <Text style={{ fontSize: rfValue(13), color: colors.gray500, marginTop: scale(-4), marginBottom: scale(12) }}>{t('vaccine.subtitle')}</Text>
             </View>
           </View>
         </View>
@@ -71,11 +74,11 @@ export function VaccineTracker() {
 
       {/* Overall Progress Ring */}
       <AnimatedCard delay={60}>
-        <GlassCard intensity={isDark ? 'heavy' : 'light'} style={{ alignItems: 'center', paddingVertical: 20, marginBottom: 16 }} noBorder>
-          <Text style={{ fontSize: 16, fontWeight: '700', color: colors.gray800, marginBottom: 12 }}>Overall Vaccination Progress</Text>
+        <GlassCard intensity={isDark ? 'heavy' : 'light'} style={{ alignItems: 'center', paddingVertical: scale(20), marginBottom: scale(16) }} noBorder>
+          <Text style={{ fontSize: rfValue(16), fontWeight: '700', color: colors.gray800, marginBottom: scale(12) }}>Overall Vaccination Progress</Text>
           <AnimatedProgressRing
             progress={overallProgress}
-            size={100}
+            size={scale(100)}
             strokeWidth={8}
             color={colors.primary}
             trackColor={isDark ? colors.gray100 : colors.gray200}
@@ -93,18 +96,18 @@ export function VaccineTracker() {
 
         return (
           <AnimatedCard key={age} delay={100 + ageIdx * 80}>
-            <GlassCard intensity={isDark ? 'heavy' : 'light'} style={{ padding: 14, marginBottom: 16 }} noBorder>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, gap: 6 }}>
+            <GlassCard intensity={isDark ? 'heavy' : 'light'} style={{ padding: scale(14), marginBottom: scale(16) }} noBorder>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, gap: scale(6) }}>
                 <MaterialCommunityIcons
                   name={age === 'At Birth' ? 'baby' : age === '6 Weeks' ? 'calendar-star' : age === '10 Weeks' ? 'calendar-clock' : age === '14 Weeks' ? 'calendar-check' : age === '9 Months' ? 'calendar-month' : 'calendar-end'}
-                  size={16}
+                  size={scale(16)}
                   color={colors.primary}
                 />
-                <Text style={{ fontSize: 14, fontWeight: '700', color: colors.primary, marginRight: 8 }}>{t(AGE_KEYS[age] || age)}</Text>
-                <View style={{ flex: 1, height: 6, backgroundColor: isDark ? colors.gray100 : colors.gray200, borderRadius: 3, marginRight: 8 }}>
+                <Text style={{ fontSize: rfValue(isSmallDevice ? 12 : 14), fontWeight: '700', color: colors.primary, marginRight: scale(8), flex: 1 }} numberOfLines={1}>{t(AGE_KEYS[age] || age)}</Text>
+                <View style={{ flex: 1, height: 6, backgroundColor: isDark ? colors.gray100 : colors.gray200, borderRadius: 3, marginRight: scale(8) }}>
                   <View style={{ height: 6, backgroundColor: colors.primary, borderRadius: 3, width: `${(done / total) * 100}%` }} />
                 </View>
-                <Text style={{ fontSize: 12, color: colors.gray500, fontWeight: '600', width: 30, textAlign: 'right' }}>{done}/{total}</Text>
+                <Text style={{ fontSize: rfValue(12), color: colors.gray500, fontWeight: '600', width: scale(30), textAlign: 'right' }}>{done}/{total}</Text>
               </View>
               {ageVaccines.map((vaccine) => (
                 <PressableScale key={vaccine.id} scaleTo={0.97} duration={80}>
@@ -117,7 +120,7 @@ export function VaccineTracker() {
                       justifyContent: 'space-between',
                       backgroundColor: isDark ? colors.gray50 : colors.gray50,
                       borderRadius: 12,
-                      padding: 12,
+                      padding: scale(12),
                       marginBottom: 6,
                       opacity: vaccine.status === 'done' ? 0.65 : 1,
                     }}
@@ -125,30 +128,30 @@ export function VaccineTracker() {
                     <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
                       <View
                         style={{
-                          width: 36,
-                          height: 36,
+                          width: scale(36),
+                          height: scale(36),
                           borderRadius: 10,
                           alignItems: 'center',
                           justifyContent: 'center',
-                          marginRight: 12,
+                          marginRight: scale(12),
                           backgroundColor: vaccine.status === 'done' ? colors.success : vaccine.status === 'upcoming' ? colors.warning + '20' : colors.error + '15',
                         }}
                       >
                         {vaccine.status === 'done' ? (
-                          <MaterialIcons name="check-circle" size={22} color={colors.white} />
+                          <MaterialIcons name="check-circle" size={scale(22)} color={colors.white} />
                         ) : vaccine.status === 'upcoming' ? (
-                          <MaterialIcons name="schedule" size={20} color={colors.accent} />
+                          <MaterialIcons name="schedule" size={scale(20)} color={colors.accent} />
                         ) : (
-                          <MaterialIcons name="radio-button-unchecked" size={20} color={colors.rose} />
+                          <MaterialIcons name="radio-button-unchecked" size={scale(20)} color={colors.rose} />
                         )}
                       </View>
                       <View style={{ flex: 1 }}>
-                        <Text style={{ fontSize: 13, fontWeight: '600', color: colors.gray800 }}>{vaccine.name}</Text>
-                        <Text style={{ fontSize: 11, color: colors.gray500, marginTop: 1 }}>{vaccine.description}</Text>
+                        <Text style={{ fontSize: rfValue(13), fontWeight: '600', color: colors.gray800 }}>{vaccine.name}</Text>
+                        <Text style={{ fontSize: rfValue(11), color: colors.gray500, marginTop: 1 }} numberOfLines={isSmallDevice ? 1 : undefined}>{vaccine.description}</Text>
                       </View>
                     </View>
-                    <View style={{ backgroundColor: colors.gray100, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 4 }}>
-                      <Text style={{ fontSize: 10, fontWeight: '600', color: colors.gray500 }}>{vaccine.age}</Text>
+                    <View style={{ backgroundColor: colors.gray100, borderRadius: 6, paddingHorizontal: scale(8), paddingVertical: scale(4) }}>
+                      <Text style={{ fontSize: rfValue(10), fontWeight: '600', color: colors.gray500 }}>{vaccine.age}</Text>
                     </View>
                   </TouchableOpacity>
                 </PressableScale>
@@ -157,7 +160,7 @@ export function VaccineTracker() {
           </AnimatedCard>
         );
       })}
-      <View style={{ height: 90 }} />
+      <View style={{ height: scale(90) }} />
     </ScrollView>
   );
 }

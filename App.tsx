@@ -21,6 +21,7 @@ import { Dashboard, VaccineTracker, GrowthTracker, HealthTips, Profile, SignIn, 
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { ThemeProvider, useTheme } from './src/context/ThemeContext';
 import { Tab, Language } from './src/types';
+import { useScreenDimensions, scale, rfValue, getHorizontalPadding } from './src/utils/responsive';
 
 // ---------- Tab Bar Component ----------
 function TabBar({ active, onTabChange }: { active: Tab; onTabChange: (t: Tab) => void }) {
@@ -43,8 +44,8 @@ function TabBar({ active, onTabChange }: { active: Tab; onTabChange: (t: Tab) =>
         borderBottomRightRadius: 0,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        paddingBottom: Platform.OS === 'ios' ? 20 : 12,
-        paddingTop: 6,
+        paddingBottom: Platform.OS === 'ios' ? scale(20) : scale(12),
+        paddingTop: scale(6),
         borderWidth: 0,
       }}
       noBorder
@@ -62,23 +63,23 @@ function TabBar({ active, onTabChange }: { active: Tab; onTabChange: (t: Tab) =>
           return (
             <TouchableOpacity
               key={tab.key}
-              style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 4 }}
+              style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: scale(4) }}
               onPress={() => onTabChange(tab.key)}
               activeOpacity={0.7}
             >
               <View style={{
-                width: 38,
-                height: 38,
+                width: scale(38),
+                height: scale(38),
                 borderRadius: 10,
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: 2,
                 backgroundColor: isActive ? tab.activeColor + '20' : 'transparent',
               }}>
-                <IconComponent name={tab.icon as any} size={22} color={isActive ? tab.activeColor : colors.gray400} />
+                <IconComponent name={tab.icon as any} size={scale(22)} color={isActive ? tab.activeColor : colors.gray400} />
               </View>
               <Text style={{
-                fontSize: 10,
+                fontSize: rfValue(10),
                 fontWeight: isActive ? '700' : '600',
                 letterSpacing: 0.2,
                 color: isActive ? tab.activeColor : colors.gray400,
@@ -86,7 +87,7 @@ function TabBar({ active, onTabChange }: { active: Tab; onTabChange: (t: Tab) =>
                 {tab.label}
               </Text>
               {isActive && (
-                <View style={{ width: 16, height: 3, borderRadius: 1.5, marginTop: 3, backgroundColor: tab.activeColor }} />
+                <View style={{ width: scale(16), height: 3, borderRadius: 1.5, marginTop: 3, backgroundColor: tab.activeColor }} />
               )}
             </TouchableOpacity>
           );
@@ -160,6 +161,8 @@ function MainApp() {
   const [language, setLanguage] = useState<Language>('english');
   const { colors, isDark } = useTheme();
   const { t } = useTranslation();
+  const { currentUser } = useAuth();
+  const { isSmallDevice, isTablet } = useScreenDimensions();
 
   const renderScreen = () => {
     switch (activeTab) {
@@ -189,26 +192,26 @@ function MainApp() {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={{
-              paddingTop: 8,
-              paddingBottom: 16,
-              paddingHorizontal: 20,
+              paddingTop: scale(isSmallDevice ? 6 : 8),
+              paddingBottom: scale(isSmallDevice ? 12 : 16),
+              paddingHorizontal: getHorizontalPadding(),
             }}
           >
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <View>
-                <Text style={{ fontSize: 24, fontWeight: '800', color: colors.white, letterSpacing: 0.3 }}>
-                  {t('app.name')}
+              <View style={{ flex: 1, marginRight: 12 }}>
+                <Text style={{ fontSize: rfValue(isTablet ? 28 : 24), fontWeight: '800', color: colors.white, letterSpacing: 0.3 }} numberOfLines={1}>
+                  {currentUser?.name ? `Hi, ${currentUser.name.split(' ')[0]} 👋` : t('app.name')}
                 </Text>
-                <Text style={{ fontSize: 13, color: isDark ? colors.gray400 : '#CCFBF1', marginTop: 2, fontWeight: '500' }}>
-                  {t('app.tagline')}
+                <Text style={{ fontSize: rfValue(isSmallDevice ? 12 : 13), color: isDark ? colors.gray400 : '#CCFBF1', marginTop: 2, fontWeight: '500' }} numberOfLines={1}>
+                  {currentUser ? t('app.tagline') : t('app.tagline')}
                 </Text>
               </View>
               <BoxIcon
                 icon="heart-pulse"
-                size={24}
+                size={scale(24)}
                 color={colors.white}
                 bgColor="rgba(255,255,255,0.2)"
-                containerSize={42}
+                containerSize={scale(42)}
               />
             </View>
           </LinearGradient>

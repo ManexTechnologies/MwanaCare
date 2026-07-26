@@ -9,6 +9,7 @@ import { BoxIcon, AnimatedCard, GlassCard, PressableScale, ToggleSwitch, Setting
 import { usePersistedState } from '../storage/usePersistedState';
 import { useAuth } from '../context/AuthContext';
 import { Language, NotificationSettings, AppPreferences, UnitSystem, SettingsState } from '../types';
+import { scale, rfValue, getHorizontalPadding } from '../utils/responsive';
 
 const DEFAULT_SETTINGS: SettingsState = {
   notifications: {
@@ -88,43 +89,43 @@ const handleSaveProfile = async () => {
   };
 
   return (
-    <ScrollView style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16, backgroundColor: colors.primaryBg }} showsVerticalScrollIndicator={false}>
+    <ScrollView style={{ flex: 1, paddingHorizontal: getHorizontalPadding(), paddingTop: scale(16), backgroundColor: colors.primaryBg }} showsVerticalScrollIndicator={false}>
       <AnimatedCard delay={0}>
-        <View style={{ marginBottom: 16 }}>
+        <View style={{ marginBottom: scale(16) }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <BoxIcon icon="account-circle" size={22} color={colors.indigo} bgColor={colors.indigo + '15'} containerSize={40} />
-            <View style={{ marginLeft: 12 }}>
-              <Text style={{ fontSize: 18, fontWeight: '700', color: colors.gray800, marginBottom: 4, marginTop: 4 }}>{t('profile.title')}</Text>
-              <Text style={{ fontSize: 13, color: colors.gray500, marginTop: -4, marginBottom: 12 }}>{t('profile.subtitle')}</Text>
+            <BoxIcon icon="account-circle" size={scale(22)} color={colors.indigo} bgColor={colors.indigo + '15'} containerSize={scale(40)} />
+            <View style={{ marginLeft: scale(12) }}>
+              <Text style={{ fontSize: rfValue(18), fontWeight: '700', color: colors.gray800, marginBottom: scale(4), marginTop: scale(4) }}>{t('profile.title')}</Text>
+              <Text style={{ fontSize: rfValue(13), color: colors.gray500, marginTop: scale(-4), marginBottom: scale(12) }}>{t('profile.subtitle')}</Text>
             </View>
           </View>
         </View>
       </AnimatedCard>
 
       <AnimatedCard delay={100}>
-        <GlassCard intensity={isDark ? 'heavy' : 'light'} style={{ marginBottom: 20 }} noBorder>
+        <GlassCard intensity={isDark ? 'heavy' : 'light'} style={{ marginBottom: scale(20) }} noBorder>
           <LinearGradient colors={isDark ? [colors.gray50, colors.gray50] : ['#EEF2FF', '#E0E7FF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-            style={{ borderRadius: 18, padding: 24, alignItems: 'center' }}>
-            <View style={{ position: 'relative', marginBottom: 14 }}>
+            style={{ borderRadius: 18, padding: scale(24), alignItems: 'center' }}>
+            <View style={{ position: 'relative', marginBottom: scale(14) }}>
               <LinearGradient colors={[colors.primary, colors.primaryLight]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-                style={{ width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ fontSize: 36, fontWeight: '800', color: colors.white }}>M</Text>
+                style={{ width: scale(80), height: scale(80), borderRadius: 40, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontSize: rfValue(36), fontWeight: '800', color: colors.white }}>M</Text>
               </LinearGradient>
-              <View style={{ position: 'absolute', bottom: 0, right: -2, backgroundColor: colors.white, borderRadius: 12, width: 24, height: 24, alignItems: 'center', justifyContent: 'center' }}>
-                <MaterialIcons name="verified" size={16} color={colors.info} />
+              <View style={{ position: 'absolute', bottom: 0, right: -2, backgroundColor: colors.white, borderRadius: 12, width: scale(24), height: scale(24), alignItems: 'center', justifyContent: 'center' }}>
+                <MaterialIcons name="verified" size={scale(16)} color={colors.info} />
               </View>
             </View>
-            <Text style={{ fontSize: 18, fontWeight: '700', color: colors.gray800, marginBottom: 6 }}>{currentUser?.name || t('profile.name')}</Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-              <MaterialIcons name="calendar-today" size={14} color={colors.gray500} />
-              <Text style={{ fontSize: 13, color: colors.gray500 }}> {currentUser?.dueDate ? `Due: ${new Date(currentUser.dueDate).toLocaleDateString()}` : t('profile.dob_not_set')}</Text>
+            <Text style={{ fontSize: rfValue(18), fontWeight: '700', color: colors.gray800, marginBottom: scale(6) }}>{currentUser?.name || t('profile.name')}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scale(16) }}>
+              <MaterialIcons name="calendar-today" size={scale(14)} color={colors.gray500} />
+              <Text style={{ fontSize: rfValue(13), color: colors.gray500 }}> {currentUser?.dueDate ? `Due: ${new Date(currentUser.dueDate).toLocaleDateString()}` : t('profile.dob_not_set')}</Text>
             </View>
             <PressableScale>
               <TouchableOpacity
                 onPress={() => setShowEditProfile(true)}
-                style={{ backgroundColor: colors.white, borderRadius: 10, paddingVertical: 10, paddingHorizontal: 24, flexDirection: 'row', alignItems: 'center', borderWidth: 1.5, borderColor: colors.primary + '30' }}>
-                <Feather name="edit-2" size={14} color={colors.primary} />
-                <Text style={{ fontSize: 14, fontWeight: '600', color: colors.primary }}> {t('profile.edit')}</Text>
+                style={{ backgroundColor: colors.white, borderRadius: 10, paddingVertical: scale(10), paddingHorizontal: scale(24), flexDirection: 'row', alignItems: 'center', borderWidth: 1.5, borderColor: colors.primary + '30' }}>
+                <Feather name="edit-2" size={scale(14)} color={colors.primary} />
+                <Text style={{ fontSize: rfValue(14), fontWeight: '600', color: colors.primary }}> {t('profile.edit')}</Text>
               </TouchableOpacity>
             </PressableScale>
           </LinearGradient>
@@ -133,30 +134,30 @@ const handleSaveProfile = async () => {
 
       {/* Edit Profile Modal */}
       <SettingsModal visible={showEditProfile} title="Edit Profile" onClose={() => setShowEditProfile(false)}>
-        <View style={{ marginBottom: 14 }}>
-          <Text style={{ fontSize: 13, fontWeight: '600', color: colors.gray600, marginBottom: 5 }}>Full Name</Text>
+        <View style={{ marginBottom: scale(14) }}>
+          <Text style={{ fontSize: rfValue(13), fontWeight: '600', color: colors.gray600, marginBottom: scale(5) }}>Full Name</Text>
           <TextInput
-            style={{ backgroundColor: colors.gray50, borderRadius: 10, padding: 12, fontSize: 15, borderWidth: 1, borderColor: colors.gray200, color: colors.gray800 }}
+            style={{ backgroundColor: colors.gray50, borderRadius: 10, padding: scale(12), fontSize: rfValue(15), borderWidth: 1, borderColor: colors.gray200, color: colors.gray800 }}
             placeholder="Your name"
             placeholderTextColor={colors.gray400}
             value={editName}
             onChangeText={setEditName}
           />
         </View>
-        <View style={{ marginBottom: 14 }}>
-          <Text style={{ fontSize: 13, fontWeight: '600', color: colors.gray600, marginBottom: 5 }}>Baby's Name</Text>
+        <View style={{ marginBottom: scale(14) }}>
+          <Text style={{ fontSize: rfValue(13), fontWeight: '600', color: colors.gray600, marginBottom: scale(5) }}>Baby's Name</Text>
           <TextInput
-            style={{ backgroundColor: colors.gray50, borderRadius: 10, padding: 12, fontSize: 15, borderWidth: 1, borderColor: colors.gray200, color: colors.gray800 }}
+            style={{ backgroundColor: colors.gray50, borderRadius: 10, padding: scale(12), fontSize: rfValue(15), borderWidth: 1, borderColor: colors.gray200, color: colors.gray800 }}
             placeholder="Baby's name (optional)"
             placeholderTextColor={colors.gray400}
             value={editBabyName}
             onChangeText={setEditBabyName}
           />
         </View>
-        <View style={{ marginBottom: 20 }}>
-          <Text style={{ fontSize: 13, fontWeight: '600', color: colors.gray600, marginBottom: 5 }}>Due Date</Text>
+        <View style={{ marginBottom: scale(20) }}>
+          <Text style={{ fontSize: rfValue(13), fontWeight: '600', color: colors.gray600, marginBottom: scale(5) }}>Due Date</Text>
           <TextInput
-            style={{ backgroundColor: colors.gray50, borderRadius: 10, padding: 12, fontSize: 15, borderWidth: 1, borderColor: colors.gray200, color: colors.gray800 }}
+            style={{ backgroundColor: colors.gray50, borderRadius: 10, padding: scale(12), fontSize: rfValue(15), borderWidth: 1, borderColor: colors.gray200, color: colors.gray800 }}
             placeholder="YYYY-MM-DD"
             placeholderTextColor={colors.gray400}
             value={editDueDate}
@@ -166,78 +167,78 @@ const handleSaveProfile = async () => {
         <PressableScale>
           <TouchableOpacity
             onPress={handleSaveProfile}
-            style={{ backgroundColor: colors.primary, borderRadius: 10, paddingVertical: 14, alignItems: 'center' }}>
-            <Text style={{ fontSize: 15, fontWeight: '600', color: colors.white }}>Save Changes</Text>
+            style={{ backgroundColor: colors.primary, borderRadius: 10, paddingVertical: scale(14), alignItems: 'center' }}>
+            <Text style={{ fontSize: rfValue(15), fontWeight: '600', color: colors.white }}>Save Changes</Text>
           </TouchableOpacity>
         </PressableScale>
       </SettingsModal>
 
       <AnimatedCard delay={150}>
-        <Text style={{ fontSize: 18, fontWeight: '700', color: colors.gray800, marginBottom: 12, marginTop: 4 }}>{t('settings.title')}</Text>
+        <Text style={{ fontSize: rfValue(18), fontWeight: '700', color: colors.gray800, marginBottom: scale(12), marginTop: scale(4) }}>{t('settings.title')}</Text>
       </AnimatedCard>
 
       <AnimatedCard delay={180}>
-        <GlassCard intensity={isDark ? 'heavy' : 'light'} style={{ marginBottom: 20 }} noBorder>
+        <GlassCard intensity={isDark ? 'heavy' : 'light'} style={{ marginBottom: scale(20) }} noBorder>
           {/* Notifications */}
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 14, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: colors.gray100, gap: 12 }}
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: scale(14), paddingHorizontal: scale(16), borderBottomWidth: 1, borderBottomColor: colors.gray100, gap: scale(12) }}
             onPress={() => setActiveModal('notifications')}>
-            <BoxIcon icon="bell-outline" size={18} color={colors.primary} bgColor={colors.primary + '12'} containerSize={34} />
-            <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.gray800 }}>{t('settings.notifications')}</Text>
-            <View style={{ backgroundColor: colors.gray100, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3, marginRight: 4 }}>
-              <Text style={{ fontSize: 11, fontWeight: '600', color: colors.gray600 }}>{settings.notifications.pushNotifications ? t('stat.on') : t('stat.off')}</Text>
+            <BoxIcon icon="bell-outline" size={scale(18)} color={colors.primary} bgColor={colors.primary + '12'} containerSize={scale(34)} />
+            <Text style={{ flex: 1, fontSize: rfValue(14), fontWeight: '500', color: colors.gray800 }}>{t('settings.notifications')}</Text>
+            <View style={{ backgroundColor: colors.gray100, borderRadius: 6, paddingHorizontal: scale(8), paddingVertical: scale(3), marginRight: scale(4) }}>
+              <Text style={{ fontSize: rfValue(11), fontWeight: '600', color: colors.gray600 }}>{settings.notifications.pushNotifications ? t('stat.on') : t('stat.off')}</Text>
             </View>
-            <Feather name="chevron-right" size={20} color={colors.gray300} />
+            <Feather name="chevron-right" size={scale(20)} color={colors.gray300} />
           </TouchableOpacity>
 
           {/* Language */}
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 14, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: colors.gray100, gap: 12 }}
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: scale(14), paddingHorizontal: scale(16), borderBottomWidth: 1, borderBottomColor: colors.gray100, gap: scale(12) }}
             onPress={() => setActiveModal('language')}>
-            <BoxIcon icon="earth" size={18} color={colors.secondary} bgColor={colors.secondary + '12'} containerSize={34} />
-            <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.gray800 }}>{t('settings.language')}</Text>
-            <View style={{ backgroundColor: colors.gray100, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3, marginRight: 4 }}>
-              <Text style={{ fontSize: 11, fontWeight: '600', color: colors.gray600 }}>{currentLang?.label || 'English'}</Text>
+            <BoxIcon icon="earth" size={scale(18)} color={colors.secondary} bgColor={colors.secondary + '12'} containerSize={scale(34)} />
+            <Text style={{ flex: 1, fontSize: rfValue(14), fontWeight: '500', color: colors.gray800 }}>{t('settings.language')}</Text>
+            <View style={{ backgroundColor: colors.gray100, borderRadius: 6, paddingHorizontal: scale(8), paddingVertical: scale(3), marginRight: scale(4) }}>
+              <Text style={{ fontSize: rfValue(11), fontWeight: '600', color: colors.gray600 }}>{currentLang?.label || 'English'}</Text>
             </View>
-            <Feather name="chevron-right" size={20} color={colors.gray300} />
+            <Feather name="chevron-right" size={scale(20)} color={colors.gray300} />
           </TouchableOpacity>
 
           {/* App Preferences */}
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 14, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: colors.gray100, gap: 12 }}
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: scale(14), paddingHorizontal: scale(16), borderBottomWidth: 1, borderBottomColor: colors.gray100, gap: scale(12) }}
             onPress={() => setActiveModal('preferences')}>
-            <BoxIcon icon="tune" size={18} color={colors.teal} bgColor={colors.teal + '12'} containerSize={34} />
-            <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.gray800 }}>{t('settings.preferences')}</Text>
-            <Feather name="chevron-right" size={20} color={colors.gray300} />
+            <BoxIcon icon="tune" size={scale(18)} color={colors.teal} bgColor={colors.teal + '12'} containerSize={scale(34)} />
+            <Text style={{ flex: 1, fontSize: rfValue(14), fontWeight: '500', color: colors.gray800 }}>{t('settings.preferences')}</Text>
+            <Feather name="chevron-right" size={scale(20)} color={colors.gray300} />
           </TouchableOpacity>
 
           {/* Export Data */}
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 14, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: colors.gray100, gap: 12 }}
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: scale(14), paddingHorizontal: scale(16), borderBottomWidth: 1, borderBottomColor: colors.gray100, gap: scale(12) }}
             onPress={() => setActiveModal('export')}>
-            <BoxIcon icon="file-export-outline" size={18} color={colors.accent} bgColor={colors.accent + '12'} containerSize={34} />
-            <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.gray800 }}>{t('settings.export')}</Text>
-            <Feather name="chevron-right" size={20} color={colors.gray300} />
+            <BoxIcon icon="file-export-outline" size={scale(18)} color={colors.accent} bgColor={colors.accent + '12'} containerSize={scale(34)} />
+            <Text style={{ flex: 1, fontSize: rfValue(14), fontWeight: '500', color: colors.gray800 }}>{t('settings.export')}</Text>
+            <Feather name="chevron-right" size={scale(20)} color={colors.gray300} />
           </TouchableOpacity>
 
           {/* Help & Support */}
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 14, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: colors.gray100, gap: 12 }}
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: scale(14), paddingHorizontal: scale(16), borderBottomWidth: 1, borderBottomColor: colors.gray100, gap: scale(12) }}
             onPress={() => setActiveModal('help')}>
-            <BoxIcon icon="help-circle-outline" size={18} color={colors.rose} bgColor={colors.rose + '12'} containerSize={34} />
-            <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.gray800 }}>{t('settings.help')}</Text>
-            <Feather name="chevron-right" size={20} color={colors.gray300} />
+            <BoxIcon icon="help-circle-outline" size={scale(18)} color={colors.rose} bgColor={colors.rose + '12'} containerSize={scale(34)} />
+            <Text style={{ flex: 1, fontSize: rfValue(14), fontWeight: '500', color: colors.gray800 }}>{t('settings.help')}</Text>
+            <Feather name="chevron-right" size={scale(20)} color={colors.gray300} />
           </TouchableOpacity>
 
           {/* About */}
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 14, paddingHorizontal: 16, borderBottomWidth: 1, borderBottomColor: colors.gray100, gap: 12 }}
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: scale(14), paddingHorizontal: scale(16), borderBottomWidth: 1, borderBottomColor: colors.gray100, gap: scale(12) }}
             onPress={() => setActiveModal('about')}>
-            <BoxIcon icon="information-outline" size={18} color={colors.gray600} bgColor={colors.gray100} containerSize={34} />
-            <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.gray800 }}>{t('settings.about')}</Text>
-            <Feather name="chevron-right" size={20} color={colors.gray300} />
+            <BoxIcon icon="information-outline" size={scale(18)} color={colors.gray600} bgColor={colors.gray100} containerSize={scale(34)} />
+            <Text style={{ flex: 1, fontSize: rfValue(14), fontWeight: '500', color: colors.gray800 }}>{t('settings.about')}</Text>
+            <Feather name="chevron-right" size={scale(20)} color={colors.gray300} />
           </TouchableOpacity>
 
           {/* Sign Out */}
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 14, paddingHorizontal: 16, gap: 12 }}
+          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: scale(14), paddingHorizontal: scale(16), gap: scale(12) }}
             onPress={handleSignOut}>
-            <BoxIcon icon="logout" size={18} color={colors.error} bgColor={colors.error + '12'} containerSize={34} />
-            <Text style={{ flex: 1, fontSize: 14, fontWeight: '500', color: colors.error }}>Sign Out</Text>
-            <Feather name="log-out" size={18} color={colors.error} />
+            <BoxIcon icon="logout" size={scale(18)} color={colors.error} bgColor={colors.error + '12'} containerSize={scale(34)} />
+            <Text style={{ flex: 1, fontSize: rfValue(14), fontWeight: '500', color: colors.error }}>Sign Out</Text>
+            <Feather name="log-out" size={scale(18)} color={colors.error} />
           </TouchableOpacity>
         </GlassCard>
       </AnimatedCard>

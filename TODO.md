@@ -1,42 +1,44 @@
-# MwanaCare - Neon Database + Authentication with Vercel Serverless ✅ COMPLETE
+# App Responsiveness Improvements
 
-## Phase 1: Database & API Foundation ✅
-- [x] Create `api/_lib/db.ts` — Neon PostgreSQL connection
-- [x] Create `api/_lib/auth.ts` — JWT token helpers
-- [x] Create `api/schema.sql` — Database tables DDL
-- [x] Create `.env.example` — Environment variable template
+## Completed Steps
 
-## Phase 2: API Endpoints ✅
-- [x] Create `api/auth/register.ts` — POST /api/auth/register
-- [x] Create `api/auth/login.ts` — POST /api/auth/login
-- [x] Create `api/auth/me.ts` — GET /api/auth/me
-- [x] Create `api/measurements/index.ts` — GET/POST /api/measurements
-- [x] Create `api/vaccines/index.ts` — GET/POST /api/vaccines
-- [x] Create `api/profile/index.ts` — PUT /api/profile
-- [x] Create `api/dashboard/index.ts` — GET /api/dashboard
+- [x] Analyze all source files for responsiveness issues
+- [x] Create responsive utility (`src/utils/responsive.ts`)
+- [x] Darken theme colors (`src/theme/colors.ts`)
+- [x] Update Dashboard header to show username (`App.tsx`)
+- [x] Update all screens with responsive padding/fonts/layout
+- [x] Update components with responsive sizing
 
-## Phase 3: Frontend API Client ✅
-- [x] Create `src/api/client.ts` — Fetch wrapper with JWT auth
-- [x] Update `src/types/index.ts` — Remove password field, add isLoading
+## TODO Steps
 
-## Phase 4: Refactor Auth & Screens ✅
-- [x] Rewrite `src/context/AuthContext.tsx` — Uses real API (register, login, profile, JWT session)
-- [x] Update `src/screens/SignIn.tsx` — Async real login flow
-- [x] Update `src/screens/SignUp.tsx` — Async real signup flow
-- [x] Update `src/screens/Profile.tsx` — Real profile API calls
-- [x] Update `App.tsx` — Add loading state for auth initialization
+### 1. Create responsive utility
+- [x] `src/utils/responsive.ts` — useWindowDimensions, scale, moderateScale, rfValue, isSmallDevice, isTablet
 
-## Phase 5: Deployment Config ✅
-- [x] Update `vercel.json` — API function runtime + rewrite rules
-- [x] Update `package.json` — Add dependencies (@neondatabase/serverless, bcryptjs, jsonwebtoken, @vercel/node)
-- [x] Install dependencies
+### 2. Darken theme colors  
+- [x] `src/theme/colors.ts` — Darken primary, primaryDark, primaryLight
+- [x] `src/theme/colors.ts` — Darken DARK_COLORS accordingly
 
-## Deployment Instructions
-To go live, you need to:
-1. **Create a Neon database** at https://neon.tech → Create project → Copy connection string
-2. **Run the schema** against your Neon DB: `psql <connection-string> -f api/schema.sql`
-3. **Deploy to Vercel** and set environment variables:
-   - `NEON_DATABASE_URL` = your Neon connection string
-   - `JWT_SECRET` = a random secure string (32+ chars)
-4. **Note:** Dashboard, GrowthTracker, and VaccineTracker screens still use localStorage for data display. They have the API client available (`src/api/client.ts`) to connect to the backend when ready.
+### 3. Update App.tsx for user greeting + responsive header
+- [x] Import useAuth, get currentUser
+- [x] Show username in header instead of app.name/app.tagline
+- [x] Use responsive padding, font sizes
+
+### 4. Update screens with responsive layout
+- [x] `Dashboard.tsx` — responsive rings, wrapping quick actions, scale fonts/padding
+- [x] `VaccineTracker.tsx` — responsive rings, scale fonts/padding
+- [x] `GrowthTracker.tsx` — responsive padding/fonts
+- [x] `HealthTips.tsx` — responsive padding/fonts
+- [x] `Profile.tsx` — responsive padding/fonts, settings rows
+- [x] `SignIn.tsx` — responsive padding/fonts, form sizing
+- [x] `SignUp.tsx` — responsive padding/fonts, form sizing
+
+### 5. Update components with responsive sizing
+- [x] `StatCard.tsx` — scale value font size
+- [x] `AnimatedProgressRing.tsx` — accept responsive sizes
+- [x] `BoxIcon.tsx` — accept responsive sizes
+- [x] `SettingsModal.tsx` — improve modal height
+- [x] `AnimatedCard.tsx` — no changes needed (uses native driver animations)
+
+### 6. Test
+- [ ] Run `npx expo start --web` to verify
 

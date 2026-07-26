@@ -7,6 +7,7 @@ import {
 } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { SHADOWS } from '../theme';
+import { scale, rfValue, useScreenDimensions } from '../utils/responsive';
 
 interface StatCardProps {
   title: string;
@@ -26,6 +27,7 @@ export function StatCard({
   iconFamily = 'MaterialCommunityIcons',
 }: StatCardProps) {
   const { colors, isDark } = useTheme();
+  const { isSmallDevice } = useScreenDimensions();
   const IconComponent =
     iconFamily === 'Ionicons'
       ? Ionicons
@@ -37,7 +39,7 @@ export function StatCard({
     <View
       style={{
         borderRadius: 14,
-        padding: 16,
+        padding: scale(16),
         borderLeftWidth: 4,
         borderLeftColor: color,
         overflow: 'hidden',
@@ -47,25 +49,25 @@ export function StatCard({
         style={{
           flexDirection: 'row',
           alignItems: 'center',
-          marginBottom: 10,
+          marginBottom: scale(10),
         }}
       >
         <View
           style={{
-            width: 36,
-            height: 36,
+            width: scale(36),
+            height: scale(36),
             borderRadius: 10,
             backgroundColor: color + '15',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          <IconComponent name={icon as any} size={20} color={color} />
+          <IconComponent name={icon as any} size={scale(20)} color={color} />
         </View>
       </View>
       <Text
         style={{
-          fontSize: 26,
+          fontSize: rfValue(isSmallDevice ? 22 : 26),
           fontWeight: '700',
           color: colors.gray800,
         }}
@@ -73,7 +75,7 @@ export function StatCard({
         {value}
         <Text
           style={{
-            fontSize: 14,
+            fontSize: rfValue(14),
             fontWeight: '400',
             color: colors.gray500,
           }}
@@ -84,9 +86,9 @@ export function StatCard({
       </Text>
       <Text
         style={{
-          fontSize: 12,
+          fontSize: rfValue(12),
           color: colors.gray500,
-          marginTop: 2,
+          marginTop: scale(2),
           fontWeight: '500',
         }}
       >
