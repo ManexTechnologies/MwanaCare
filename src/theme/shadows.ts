@@ -27,5 +27,20 @@ export const SHADOWS = {
     shadowRadius: 12,
     elevation: 8,
   },
+  // Glassmorphism-specific shadows (soft, ethereal)
+  glass: {
+    shadowColor: '#0D9488',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 16,
+    elevation: 3,
+  },
+  glassHeavy: {
+    shadowColor: '#0D9488',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.1,
+    shadowRadius: 24,
+    elevation: 6,
+  },
 };
 

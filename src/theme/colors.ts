@@ -27,5 +27,73 @@ export const COLORS = {
   warning: '#F59E0B',
   error: '#EF4444',
   info: '#3B82F6',
+
+  // Glassmorphism tokens
+  glass: {
+    light: 'rgba(255, 255, 255, 0.7)',
+    medium: 'rgba(255, 255, 255, 0.4)',
+    heavy: 'rgba(255, 255, 255, 0.25)',
+    border: 'rgba(255, 255, 255, 0.3)',
+    borderSubtle: 'rgba(255, 255, 255, 0.15)',
+    shadow: 'rgba(0, 0, 0, 0.08)',
+    blur: 12,
+  },
+
+  // Dark theme palette
+  dark: {
+    bg: '#0F172A',
+    surface: '#1E293B',
+    surfaceAlt: '#334155',
+    text: '#F1F5F9',
+    textSecondary: '#94A3B8',
+    border: '#334155',
+    glass: {
+      light: 'rgba(30, 41, 59, 0.75)',
+      medium: 'rgba(30, 41, 59, 0.5)',
+      heavy: 'rgba(15, 23, 42, 0.4)',
+      border: 'rgba(148, 163, 184, 0.15)',
+      borderSubtle: 'rgba(148, 163, 184, 0.08)',
+      shadow: 'rgba(0, 0, 0, 0.3)',
+    },
+  },
+};
+
+export const DARK_COLORS = {
+  primary: '#14B8A6',
+  primaryDark: '#0D9488',
+  primaryLight: '#2DD4BF',
+  primaryBg: '#0F172A',
+  secondary: '#818CF8',
+  secondaryLight: '#A5B4FC',
+  accent: '#FBBF24',
+  accentLight: '#FCD34D',
+  rose: '#FB7185',
+  roseLight: '#FDA4AF',
+  indigo: '#818CF8',
+  teal: '#14B8A6',
+  white: '#F1F5F9',
+  black: '#0F172A',
+  gray50: '#1E293B',
+  gray100: '#334155',
+  gray200: '#475569',
+  gray300: '#64748B',
+  gray400: '#94A3B8',
+  gray500: '#CBD5E1',
+  gray600: '#E2E8F0',
+  gray700: '#F1F5F9',
+  gray800: '#F8FAFC',
+  gray900: '#FCFCFD',
+  success: '#34D399',
+  warning: '#FBBF24',
+  error: '#F87171',
+  info: '#60A5FA',
+  glass: {
+    light: 'rgba(30, 41, 59, 0.7)',
+    medium: 'rgba(30, 41, 59, 0.45)',
+    heavy: 'rgba(15, 23, 42, 0.35)',
+    border: 'rgba(148, 163, 184, 0.15)',
+    borderSubtle: 'rgba(148, 163, 184, 0.08)',
+    shadow: 'rgba(0, 0, 0, 0.3)',
+  },
 };
 
